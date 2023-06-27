@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: AOTDll
+  m_EditorClassIdentifier: 
+  m_GroupName: AOTDll
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 0910041484847a240979896e3e200774
+  m_SerializeEntries:
+  - m_GUID: 98c1f36a566d49c46858b1b74a7cea5e
+    m_Address: System.Core
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot
+  - m_GUID: c2d05c2a7ac15184ea36c61639d7176d
+    m_Address: UniTask.Addressables.dll
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot
+  - m_GUID: dde1d0a7a2db3424983c48e28395a28e
+    m_Address: mscorlib.dll
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot
+  - m_GUID: ffe7966c9f1008b4e9d35f10c9e7d707
+    m_Address: System
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot
+  - m_GUID: 7e342ab229df24148b1a2d244a1f8ccc
+    m_Address: UniTask.dll
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot
+  - m_GUID: 386c0b5a827363e40bfe73886e8661ce
+    m_Address: Unity.Addressables.dll
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 902500754ad1f7240be023204c9a5f38, type: 2}
+    - {fileID: 11400000, guid: 1ea60f6cc0669ce40b528d2976e1a881, type: 2}
