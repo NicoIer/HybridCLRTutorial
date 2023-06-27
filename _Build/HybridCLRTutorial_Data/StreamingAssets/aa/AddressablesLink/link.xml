@@ -1,6 +1,7 @@
 <linker>
   <assembly fullname="HotUpdate, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="HotUpdate.CubeComponent" preserve="all" />
+    <type fullname="HotUpdate.KeyboardComponent" preserve="all" />
   </assembly>
   <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
