@@ -4,6 +4,7 @@ using Nico.AddressablesUpdater;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -157,6 +158,8 @@ namespace Nico.Edotor
                     entry.SetLabel(label, true, true);
                 }
             }
+
+            var schema = group.AddSchema<BundledAssetGroupSchema>();
         }
 
         private List<string> SearchAssetsByFolder(string folderPath, bool deep = true)

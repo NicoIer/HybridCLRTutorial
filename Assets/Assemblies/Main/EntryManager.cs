@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
 using HybridCLR;
+using Nico;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.Serialization;
 
 namespace Main
 {
@@ -15,7 +18,10 @@ namespace Main
         // 这里使用标签和引用来加载资源 是为了简单
         public AssetLabelReference hotUpdateDllLabelRef; // 热更DLL标签
         public AssetLabelReference aotMetadataDllLabelRef; // AOT元数据DLL标签
-        public AssetReference hotUpdateMainSceneRef; // 热更主场景
+
+        public List<AssetReference> hotScenes = new List<AssetReference>(); // 热更游戏场景
+
+        [HideInInspector] public List<string> hotSceneNames = new List<string>();
 
         // 热更入口 从这里开始
         private void Start()
@@ -23,6 +29,7 @@ namespace Main
             //在Start中调用执行更新检查的任务
             _check_update().Forget();
         }
+
 
         private async UniTask _check_update()
         {
@@ -32,8 +39,6 @@ namespace Main
             await _load_meta_data_for_aot_dlls();
             //加载热更DLL任务
             await _load_hotfix_dlls();
-            //进入热更主场景任务
-            await _enter_hotfix_main_scene();
         }
 
         private async UniTask _update_address_ables()
@@ -122,12 +127,10 @@ namespace Main
             }
         }
 
-        private async UniTask _enter_hotfix_main_scene()
+        private async void _enter_hotfix_main_scene(AssetReference assetReference)
         {
-            // 等待用户输入
-            await _wait_for_enter_input();
             // 加载热更主场景
-            var scene = await Addressables.LoadSceneAsync(hotUpdateMainSceneRef);
+            var scene = await Addressables.LoadSceneAsync(assetReference);
             // 激活场景
             await scene.ActivateAsync();
         }
@@ -141,13 +144,42 @@ namespace Main
                     {
                         await UniTask.WaitForFixedUpdate();
                     }
+
                     break;
                 case RuntimePlatform.Android:
                     while (Input.touchCount == 0)
                     {
                         await UniTask.WaitForFixedUpdate();
                     }
+
                     break;
+            }
+        }
+        
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            hotSceneNames.Clear();
+            foreach (var assetReference in hotScenes)
+            {
+                hotSceneNames.Add(assetReference.editorAsset.name);
+            }
+        }
+#endif
+
+        private void OnGUI()
+        {
+            //按钮大小 200,100
+            //屏幕中心绘制选择场景按钮列表
+            for (int i = 0; i < hotScenes.Count; i++)
+            {
+                var sceneName = hotSceneNames[i];
+                var sceneRef = hotScenes[i];
+                //获取按钮的位置
+                if (GUILayout.Button(sceneName, GUILayout.Width(200), GUILayout.Height(100)))
+                {
+                    _enter_hotfix_main_scene(sceneRef);
+                }
             }
         }
     }

@@ -22,7 +22,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - hot_update_scene
+  - m_GUID: 87f1437974ab01043a6194c9934deccb
+    m_Address: HotUpdateScene/Game02
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - hot_update_scene
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
   m_SchemaSet:
-    m_Schemas: []
+    m_Schemas:
+    - {fileID: 11400000, guid: a8f4d60c5afdcf640ac44e4081911202, type: 2}

@@ -448,11 +448,20 @@ MonoBehaviour:
     m_LabelString: hot_update_dll
   aotMetadataDllLabelRef:
     m_LabelString: aot_dll
-  hotUpdateMainSceneRef:
-    m_AssetGUID: a52cff069b653cd459b33e804db23eae
+  hotScenes:
+  - m_AssetGUID: a52cff069b653cd459b33e804db23eae
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: 87f1437974ab01043a6194c9934deccb
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  hotSceneNames:
+  - HotUpdateScene
+  - HotUpdateScene
+  - HotUpdateScene
+  - Game02
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
