@@ -14,7 +14,12 @@
                 <ui:Label text="打开addressables group" display-tooltip-when-elided="true" />
                 <ui:Button text="open group" display-tooltip-when-elided="true" style="flex-direction: row; align-items: flex-end; justify-content: center;" />
             </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:VisualElement name="hot_update" style="flex-grow: 1; flex-direction: row; align-items: flex-start;">
+                <ui:Label text="更新热更程序集" display-tooltip-when-elided="true" />
+                <ui:Button text="update" display-tooltip-when-elided="true" style="flex-direction: column;" />
+                <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="label" style="width: initial; height: initial; max-width: 120px; max-height: 40px;" />
+                <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="target" style="max-width: 120px; min-width: 80px; flex-direction: column;" />
+            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement style="flex-direction: column; flex-grow: 1; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; align-items: auto; min-width: 400px; justify-content: flex-start; min-height: 220px; opacity: 1;" />
     </ui:VisualElement>

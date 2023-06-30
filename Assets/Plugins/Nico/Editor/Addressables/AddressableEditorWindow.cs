@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using HybridCLR.Editor.Commands;
 using Nico.AddressablesUpdater;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -25,7 +28,11 @@ namespace Nico.Edotor
         private Button _updateAddressableButton;
         private ProgressBar _updateAddressableProgressBar;
 
-        private Button _openGroupButton;
+
+        private Button _hotUpdateButton;
+        private DropdownField _hotUpdateLabelSelect;
+        private DropdownField _hotUpdateTargetSelect;
+
 
         [MenuItem("Tools/Nico/AddressableEditorWindow")]
         public static void ShowExample()
@@ -49,7 +56,7 @@ namespace Nico.Edotor
         {
             QueryAddressableInit();
             QueryAddressableUpdate();
-            // QueryAddressableGroup();
+            QueryHotUpdate();
         }
 
 
@@ -85,12 +92,68 @@ namespace Nico.Edotor
             _updateAddressableProgressBar.title = "100%";
         }
 
-        // private void QueryAddressableGroup()
-        // {
-        //     VisualElement openGroup = rootVisualElement.Q<VisualElement>("open_group");
-        //     _openGroupButton = openGroup.Q<Button>();
-        //     _openGroupButton.clickable.clicked += OpenGroup;
-        // }
+        private void QueryHotUpdate()
+        {
+            VisualElement hotUpdate = rootVisualElement.Q<VisualElement>("hot_update");
+            _hotUpdateButton = hotUpdate.Q<Button>();
+            _hotUpdateButton.clickable.clicked += HotUpdate;
+
+
+            _hotUpdateLabelSelect = hotUpdate.Q<DropdownField>("label");
+            _hotUpdateLabelSelect.choices = config.labels.Values.ToList();
+            _hotUpdateLabelSelect.index = 1;
+
+            _hotUpdateTargetSelect = hotUpdate.Q<DropdownField>("target");
+            //获取BuildTarget的所有枚举值
+            _hotUpdateTargetSelect.choices = System.Enum.GetNames(typeof(BuildTarget)).ToList();
+            _hotUpdateTargetSelect.value = BuildTarget.StandaloneWindows64.ToString();
+        }
+
+        private void HotUpdate()
+        {
+            _hotUpdateButton.SetEnabled(false);
+            var target = _hotUpdateTargetSelect.value;
+            BuildTarget buildTarget = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), target);
+            //通知HybirdCLR编译热更程序集
+            CompileDllCommand.CompileDll(buildTarget);
+            //
+            var label = _hotUpdateLabelSelect.value;
+
+            // Debug.Log($"label:{label},target:{target}");
+            string originFolder = $"HybridCLRData/HotUpdateDlls/{target}/";
+            List<AddressableAssetEntry> entries = new List<AddressableAssetEntry>();
+            foreach (var assetGroup in config.groups.Values)
+            {
+                foreach (var entry in assetGroup.entries)
+                {
+                    if (entry.labels.Contains(label))
+                    {
+                        entries.Add(entry);
+                    }
+                }
+            }
+
+            foreach (var entry in entries)
+            {
+                string address = entry.AssetPath;
+                //确认是以.dll.bytes结尾的文件
+                if (!address.EndsWith(".dll.bytes"))
+                {
+                    Debug.LogWarning($"不是以.dll.bytes结尾的文件:{address}");
+                    continue;
+                }
+
+                //拿到dll的名称
+                string dllName = entry.address.Split('/').Last();
+
+                string originPath = $"{originFolder}{dllName}";
+                FileUtil.ReplaceFile(originPath, address);
+            }
+
+            AssetDatabase.Refresh();
+            Debug.Log("热更dll完成");
+            _hotUpdateButton.SetEnabled(true);
+        }
 
         #endregion
 

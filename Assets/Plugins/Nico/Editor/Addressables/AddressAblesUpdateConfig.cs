@@ -17,12 +17,9 @@ namespace Nico.AddressablesUpdater
         public AddressableAssetSettings settings => AddressableAssetSettingsDefaultObject.GetSettings(true);
         [SerializeField] public VisualTreeAsset uxml;
         [SerializeField] public StyleSheet uss;
-        public SerializableDictionary<string, string> folderToLabel = new SerializableDictionary<string, string>();
-        public SerializableDictionary<string, AddressableAssetGroup> groups =
-            new SerializableDictionary<string, AddressableAssetGroup>();
-
-        [SerializeField]
-        private SerializableDictionary<string, string> labels = new SerializableDictionary<string, string>();
+        public SerializableDictionary<string, string> folderToLabel = new();
+        public SerializableDictionary<string, AddressableAssetGroup> groups = new();
+        [SerializeField] public SerializableDictionary<string, string> labels = new();
         // 对应文件夹的配置项目
 
         private void OnValidate()
