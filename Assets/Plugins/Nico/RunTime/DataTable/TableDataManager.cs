@@ -19,7 +19,7 @@ namespace Nico
             foreach (var type in types)
             {
                 //从 Addressables 中加载
-                var dataTable = Addressables.LoadAssetAsync<ScriptableObject>(type.Name).WaitForCompletion();
+                var dataTable = Addressables.LoadAssetAsync<ScriptableObject>("DataTable/"+type.Name).WaitForCompletion();
                 if (dataTable == null)
                 {
                     Debug.LogError($"[TableDataManager] Load {type.Name} failed");
