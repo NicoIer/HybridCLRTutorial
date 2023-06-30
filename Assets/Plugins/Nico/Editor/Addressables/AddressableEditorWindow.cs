@@ -20,9 +20,11 @@ namespace Nico.Edotor
     public partial class AddressableEditorWindow : EditorWindow
     {
         public AddressAblesUpdateConfig config;
+
         private VisualTreeAsset uxml => config.uxml;
         private StyleSheet uss => config.uss;
 
+        private ObjectField _configObjectField;
         private Button _initAddressableButton;
 
         private Button _updateAddressableButton;
@@ -33,6 +35,9 @@ namespace Nico.Edotor
         private DropdownField _hotUpdateLabelSelect;
         private DropdownField _hotUpdateTargetSelect;
 
+
+        private Button _importDataTableButton;
+        private ProgressBar _importDataTableProgressBar;
 
         [MenuItem("Tools/Nico/AddressableEditorWindow")]
         public static void ShowExample()
@@ -57,6 +62,7 @@ namespace Nico.Edotor
             QueryAddressableInit();
             QueryAddressableUpdate();
             QueryHotUpdate();
+            QueryImportDataTable();
         }
 
 
@@ -79,8 +85,11 @@ namespace Nico.Edotor
             VisualElement initAddressable = rootVisualElement.Q<VisualElement>("init_addressable");
             _initAddressableButton = initAddressable.Q<Button>();
             _initAddressableButton.clickable.clicked += InitAddressable;
+            _configObjectField = initAddressable.Q<ObjectField>();
+            _configObjectField.objectType = typeof(AddressAblesUpdateConfig);
+            _configObjectField.value = config;
+            _configObjectField.SetEnabled(false);
         }
-
 
         private void QueryAddressableUpdate()
         {
@@ -101,7 +110,7 @@ namespace Nico.Edotor
 
             _hotUpdateLabelSelect = hotUpdate.Q<DropdownField>("label");
             _hotUpdateLabelSelect.choices = config.labels.Values.ToList();
-            _hotUpdateLabelSelect.index = 1;
+            _hotUpdateLabelSelect.value = config.defaultHotUpdateLabel;
 
             _hotUpdateTargetSelect = hotUpdate.Q<DropdownField>("target");
             //获取BuildTarget的所有枚举值
@@ -109,50 +118,12 @@ namespace Nico.Edotor
             _hotUpdateTargetSelect.value = BuildTarget.StandaloneWindows64.ToString();
         }
 
-        private void HotUpdate()
+        private void QueryImportDataTable()
         {
-            _hotUpdateButton.SetEnabled(false);
-            var target = _hotUpdateTargetSelect.value;
-            BuildTarget buildTarget = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), target);
-            //通知HybirdCLR编译热更程序集
-            CompileDllCommand.CompileDll(buildTarget);
-            //
-            var label = _hotUpdateLabelSelect.value;
-
-            // Debug.Log($"label:{label},target:{target}");
-            string originFolder = $"HybridCLRData/HotUpdateDlls/{target}/";
-            List<AddressableAssetEntry> entries = new List<AddressableAssetEntry>();
-            foreach (var assetGroup in config.groups.Values)
-            {
-                foreach (var entry in assetGroup.entries)
-                {
-                    if (entry.labels.Contains(label))
-                    {
-                        entries.Add(entry);
-                    }
-                }
-            }
-
-            foreach (var entry in entries)
-            {
-                string address = entry.AssetPath;
-                //确认是以.dll.bytes结尾的文件
-                if (!address.EndsWith(".dll.bytes"))
-                {
-                    Debug.LogWarning($"不是以.dll.bytes结尾的文件:{address}");
-                    continue;
-                }
-
-                //拿到dll的名称
-                string dllName = entry.address.Split('/').Last();
-
-                string originPath = $"{originFolder}{dllName}";
-                FileUtil.ReplaceFile(originPath, address);
-            }
-
-            AssetDatabase.Refresh();
-            Debug.Log("热更dll完成");
-            _hotUpdateButton.SetEnabled(true);
+            VisualElement dataTable = rootVisualElement.Q<VisualElement>("import_datatable");
+            _importDataTableButton = dataTable.Q<Button>();
+            _importDataTableButton.clickable.clicked += ImportDataTable;
+            _importDataTableProgressBar = dataTable.Q<ProgressBar>();
         }
 
         #endregion
@@ -250,14 +221,62 @@ namespace Nico.Edotor
             return assets;
         }
 
+        private void HotUpdate()
+        {
+            _hotUpdateButton.SetEnabled(false);
+            var target = _hotUpdateTargetSelect.value;
+            BuildTarget buildTarget = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), target);
+            //通知HybirdCLR编译热更程序集
+            CompileDllCommand.CompileDll(buildTarget);
+            //
+            var label = _hotUpdateLabelSelect.value;
 
-        // private void OpenGroup()
-        // {
-        //     //打开AddressableGroup [MenuItem("Window/Asset Management/Addressables/Settings", priority = 2051)]
-        //     var window = UnityEditor.EditorWindow.GetWindow();
-        //     
-        //
-        // }
+            // Debug.Log($"label:{label},target:{target}");
+            string originFolder = $"HybridCLRData/HotUpdateDlls/{target}/";
+            List<AddressableAssetEntry> entries = new List<AddressableAssetEntry>();
+            foreach (var assetGroup in config.groups.Values)
+            {
+                foreach (var entry in assetGroup.entries)
+                {
+                    if (entry.labels.Contains(label))
+                    {
+                        entries.Add(entry);
+                    }
+                }
+            }
+
+            foreach (var entry in entries)
+            {
+                string address = entry.AssetPath;
+                //确认是以.dll.bytes结尾的文件
+                if (!address.EndsWith(".dll.bytes"))
+                {
+                    Debug.LogWarning($"不是以.dll.bytes结尾的文件:{address}");
+                    continue;
+                }
+
+                //拿到dll的名称
+                string dllName = entry.address.Split('/').Last();
+
+                string originPath = $"{originFolder}{dllName}";
+                FileUtil.ReplaceFile(originPath, address);
+            }
+
+            AssetDatabase.Refresh();
+            Debug.Log("热更dll完成");
+            _hotUpdateButton.SetEnabled(true);
+        }
+
+        private void ImportDataTable()
+        {
+            //打开文件夹选择窗口
+            string folderPath = EditorUtility.OpenFolderPanel("选择数据表所在的文件夹", "", "");
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                return;
+            }
+            Debug.Log(folderPath);
+        }
 
         #endregion
     }
