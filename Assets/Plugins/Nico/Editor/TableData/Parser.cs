@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEditor.Callbacks;
@@ -25,21 +26,24 @@ namespace Nico.Editor
         private static Dictionary<Type, HashSet<Type>> _cacheDict = new Dictionary<Type, HashSet<Type>>();
         private static readonly Type _strType = typeof(string);
 
-        private static readonly Type _buildInParserType = typeof(BuildInParser);
+        private static readonly Type _buildInParserType = typeof(BuildInStringParser);
 
-        private static readonly Type _buildInGenericParserType = typeof(BuildInGenericParser);
+        private static readonly Type _buildInGenericParserType = typeof(BuildInStringGenericParser);
 
         private static readonly MethodInfo _buildInEnumParser =
-            _buildInGenericParserType.GetMethod(nameof(BuildInGenericParser.EnumParser));
+            _buildInGenericParserType.GetMethod(nameof(BuildInStringGenericParser.EnumParser));
 
         private static readonly MethodInfo _buildInListParser =
-            _buildInGenericParserType.GetMethod(nameof(BuildInGenericParser.ListParser));
+            _buildInGenericParserType.GetMethod(nameof(BuildInStringGenericParser.ListParser));
 
         private static readonly MethodInfo _buildInDictParser =
-            _buildInGenericParserType.GetMethod(nameof(BuildInGenericParser.DictParser));
+            _buildInGenericParserType.GetMethod(nameof(BuildInStringGenericParser.DictParser));
 
         private static readonly MethodInfo _buildInArrayParser =
-            _buildInGenericParserType.GetMethod(nameof(BuildInGenericParser.ArrayParser));
+            _buildInGenericParserType.GetMethod(nameof(BuildInStringGenericParser.ArrayParser));
+
+        private static readonly MethodInfo _buildInStructAndClassParser =
+            _buildInGenericParserType.GetMethod(nameof(BuildInStringGenericParser.StructAndClassParser));
 
 
         [DidReloadScripts]
@@ -55,35 +59,39 @@ namespace Nico.Editor
             //找到所有的ParseAttribute 标注的类型,为他们自动生成解析器
             foreach (var type in ReflectionUtils.GetTypesWithAttribute<ParseAttribute>())
             {
-                __generate_string_parser(type);
+                var methodInfo = __generate_string_parser(type);
+                __register_parser_method(methodInfo);
             }
-            //为上面注册过的所有解析器生成泛型(List,Array)解析器
-            foreach (var type in _cacheDict.Keys)
+
+            //为上面注册过的所有解析器生成泛型 string to (List,Array)解析器
+            var strParser = _cacheDict[typeof(string)];
+            foreach (var resultType in strParser.ToArray())
             {
-                Debug.Log($"generic container :{type}");
-                Type arrayType = type.MakeArrayType();
-                Debug.Log($"arrayType :{arrayType}");
-                __generate_string_parser(arrayType);
-                Type listType = typeof(List<>).MakeGenericType(type);
-                Debug.Log($"listType :{listType}");
-                __generate_string_parser(listType);
+                Type arrayType = resultType.MakeArrayType();
+                MethodInfo arrayParseMethod = __generate_string_parser(arrayType);
+                __register_parser_method(arrayParseMethod);
+
+                
+                Type listType = typeof(List<>).MakeGenericType(resultType);
+                // Debug.Log("listType:" + listType);
+                MethodInfo listParseMethod = __generate_string_parser(listType);
+                __register_parser_method(listParseMethod);
             }
         }
 
-        private static void __generate_string_parser(Type resultType)
+        private static MethodInfo __generate_string_parser(Type resultType)
         {
             //判断 string , type 的 Parse是否已经注册
             if (Contains(_strType, resultType))
             {
-                return;
-            } 
-            if (resultType.IsAbstract || resultType.IsInterface) return;
+                return null;
+            }
+
+            if (resultType.IsAbstract || resultType.IsInterface) return null;
             // 是枚举
             if (resultType.IsEnum)
             {
-                MethodInfo methodInfo = _buildInEnumParser.MakeGenericMethod(resultType);
-                __register_parser_method(methodInfo);
-                return;
+                return _buildInEnumParser.MakeGenericMethod(resultType);
             }
 
             //是泛型
@@ -94,10 +102,9 @@ namespace Nico.Editor
                 {
                     Type eleType = resultType.GetGenericArguments()[0];
                     __generate_string_parser(eleType);
-                    MethodInfo methodInfo = _buildInListParser.MakeGenericMethod(eleType);
-                    __register_parser_method(methodInfo);
-                    return;
+                    return _buildInListParser.MakeGenericMethod(eleType);
                 }
+                //TODO other generic type
             }
 
             //是数组
@@ -105,19 +112,23 @@ namespace Nico.Editor
             {
                 Type eleType = resultType.GetElementType();
                 __generate_string_parser(eleType);
-                MethodInfo methodInfo = _buildInArrayParser.MakeGenericMethod(eleType);
-                __register_parser_method(methodInfo);
-                return;
+                return _buildInArrayParser.MakeGenericMethod(eleType);
             }
 
-            //是class 或者 struct
-            if (resultType.IsClass || resultType.IsStruct())
-            {
-            }
+            throw new NotImplementedException();
+            // //是class 或者 struct
+            // if (resultType.IsClass || resultType.IsStruct())
+            // {
+            //     __generate_string_parser(resultType);
+            //     MethodInfo methodInfo = _buildInStructAndClassParser.MakeGenericMethod(resultType);
+            //     __register_parser_method(methodInfo);
+            //     return;
+            // }
         }
 
         private static void __register_parser_method(MethodInfo methodInfo)
         {
+            if (methodInfo == null) return;
             var parameters = methodInfo.GetParameters();
             if (parameters.Length != 2)
             {
@@ -179,10 +190,23 @@ namespace Nico.Editor
             _cacheDict[dataType].Add(resultType);
         }
 
+        public static void RegisterParser<TData, TResult>(ParseDelegate<TData, TResult> @delegate)
+        {
+            RegisterParser(typeof(TData), typeof(TResult), @delegate);
+        }
 
         public static bool Contains(Type dataType, Type resultType)
         {
             return _cacheDict.TryGetValue(dataType, out var set) && set.Contains(resultType);
+        }
+
+
+        public static bool Parse(Type dataType, object data, Type resultType, out object result)
+        {
+            result = null;
+            FieldInfo parserField = __get_parser_field_info(dataType, resultType); //拿到Parser<,>.parser
+            if (parserField.GetValue(null) is not Delegate parser) return false; //拿到Parser<,>.parser的值
+            return (bool)parser.DynamicInvoke(data, result); //调用Parser<,>.parser
         }
 
         public static bool Parse<TData, TResult>(TData data, out TResult result)
@@ -196,10 +220,22 @@ namespace Nico.Editor
 
             return false;
         }
+
+        public static bool StringParse<TResult>(string data, out TResult result)
+        {
+            result = default;
+            var parser = Parser<string, TResult>.parser;
+            if (parser != null)
+            {
+                return parser(data, out result);
+            }
+
+            return false;
+        }
     }
 
 
-    public static class BuildInParser
+    internal static class BuildInStringParser
     {
         public static bool IntParse(string value, out int result)
         {
@@ -372,8 +408,42 @@ namespace Nico.Editor
         }
     }
 
-    public static class BuildInGenericParser
+    internal static class BuildInStringGenericParser
     {
+        private const string _arraySeq = ";";
+        private const string _kvpPairSeq = ":";
+
+
+        public static bool StructAndClassParser<T>(string[] fieldNames, string[] filedValues, out T result)
+        {
+            var structType = typeof(T);
+            var fields = structType.GetFields();
+            result = Activator.CreateInstance<T>();
+            for (var i = 0; i < fields.Length; i++)
+            {
+                FieldInfo field = fields[i];
+                var fieldName = field.Name;
+                var fieldType = field.FieldType;
+                var index = Array.IndexOf(fieldNames, fieldName);
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                string dataStr = filedValues[index];
+
+                if (!ParserManager.Parse(typeof(string), dataStr, fieldType, out var data))
+                {
+                    Debug.LogWarning($"{structType} Parse failed when parse field {fieldName} strValue:{dataStr}");
+                    continue;
+                }
+
+                field.SetValue(result, data);
+            }
+
+            return true;
+        }
+
         public static bool EnumParser<T>(string value, out T result)
         {
             var parseResult = Enum.Parse(typeof(T), value);
@@ -389,7 +459,7 @@ namespace Nico.Editor
 
         public static bool ArrayParser<T>(string value, out T[] result)
         {
-            var values = value.Split(';');
+            var values = value.Split(_arraySeq);
             result = new T[values.Length];
             for (var i = 0; i < values.Length; i++)
             {
@@ -404,7 +474,7 @@ namespace Nico.Editor
 
         public static bool ListParser<T>(string value, out List<T> result)
         {
-            var values = value.Split(';');
+            var values = value.Split(_arraySeq);
             result = new List<T>(values.Length);
             for (var i = 0; i < values.Length; i++)
             {
@@ -421,11 +491,11 @@ namespace Nico.Editor
 
         public static bool DictParser<TKey, TValue>(string value, out Dictionary<TKey, TValue> result)
         {
-            var values = value.Split(';');
+            var values = value.Split(_arraySeq);
             result = new Dictionary<TKey, TValue>(values.Length);
             for (var i = 0; i < values.Length; i++)
             {
-                var kv = values[i].Split(':');
+                var kv = values[i].Split(_kvpPairSeq);
                 if (kv.Length != 2)
                 {
                     return false;
