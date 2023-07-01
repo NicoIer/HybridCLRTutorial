@@ -5,6 +5,20 @@ using UnityEngine;
 
 namespace Nico.Tests
 {
+    [Parse]
+    internal class MyTestParseClass
+    {
+        public int id;
+        public string name;
+    }
+
+    internal enum ParseTestEnum01
+    {
+        X1,
+        X2,
+        X3
+    }
+
     [TestFixture]
     public class ParseTests
     {
@@ -32,12 +46,6 @@ namespace Nico.Tests
             Assert.AreEqual(true, ParserManager.Contains(typeof(string), typeof(List<Vector4>)));
         }
 
-        public enum ParseTestEnum01
-        {
-            X1,
-            X2,
-            X3
-        }
 
         [Test]
         public void ParseEnum()
@@ -118,6 +126,27 @@ namespace Nico.Tests
             bool re = ParserManager.Parse<string, string[]>("1;2;3;4-", out result);
             Assert.AreEqual("4-", result[3]);
             Assert.AreEqual(true, re);
+        }
+
+
+        [Test]
+        public void TestParseBuildinInClass()
+        {
+            string str = "id=123,name=Test";
+            BuildInStringGenericParser.StructAndClassParser(str, out MyTestParseClass result);
+            Assert.AreEqual(123, result.id);
+            Assert.AreEqual("Test", result.name);
+        }
+
+        [Test]
+        public void TestParseClass()
+        {
+            Assert.AreEqual(true, ParserManager.Contains(typeof(string), typeof(MyTestParseClass)));
+            string str = "id=123,name=Test";
+            bool re = ParserManager.Parse<string, MyTestParseClass>(str, out MyTestParseClass result);
+            Assert.AreEqual(true, re);
+            Assert.AreEqual(123, result.id);
+            Assert.AreEqual("Test", result.name);
         }
     }
 }

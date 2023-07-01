@@ -273,13 +273,13 @@ namespace Nico.Edotor
 
         private void ImportDataTable()
         {
-            // string result = DefineCreator.CreateDataTable(
-            //     config.tableDataConfig.DataTableTemplate,
-            //     "Test",
-            //     new string[] { "id" ,"name","pos"},
-            //     new string[] { "int" ,"string","Vector2Int"}
-            // );
-            // Debug.Log(result);
+            string result = DefineCreator.CreateDataTable(
+                config.tableDataConfig.DataTableTemplate,
+                "Test",
+                new string[] { "id" ,"name","pos"},
+                new string[] { "int" ,"string","Vector2Int"}
+            );
+            Debug.Log(result);
             //打开文件夹选择窗口
             // string folderPath = EditorUtility.OpenFolderPanel("选择数据表所在的文件夹", "", "");
             // if (string.IsNullOrEmpty(folderPath))

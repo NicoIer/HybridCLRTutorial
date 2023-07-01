@@ -1,16 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Nico.Editor
 {
     internal static class TableDataCreator
     {
-        internal static bool Create<T>(out ITableData tableData, int id, string[] fieldNames, string[] values)
-        {
-            return Create(out tableData, typeof(T), id, values);
-        }
-
-        internal static bool Create(out ITableData tableData, Type type, int id, string[] values)
+        internal static bool CreateData(out ITableData tableData, Type type, int id, string[] values)
         {
             tableData = null;
             var data = Activator.CreateInstance(type) as ITableData;

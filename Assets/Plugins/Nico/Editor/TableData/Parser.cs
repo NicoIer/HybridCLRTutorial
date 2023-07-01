@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor.Callbacks;
-using UnityEngine;
 
 namespace Nico.Editor
 {
@@ -171,7 +170,7 @@ namespace Nico.Editor
             return parserField;
         }
 
-        public static void RegisterParser(Type dataType, Type resultType, Delegate parser)
+        private static void RegisterParser(Type dataType, Type resultType, Delegate parser)
         {
             // Debug.Log($"{dataType},{resultType} --> {parser}");
             //将parser赋值给Parser<,>.parser
@@ -180,10 +179,7 @@ namespace Nico.Editor
 
             //记录下
             // Debug.Log("set value ");
-            if (_cacheDict == null)
-            {
-                _cacheDict = new Dictionary<Type, HashSet<Type>>();
-            }
+            _cacheDict ??= new Dictionary<Type, HashSet<Type>>();
 
             if (!_cacheDict.ContainsKey(dataType))
             {
@@ -217,7 +213,7 @@ namespace Nico.Editor
 
             MethodInfo invokeMethod = parseDelegate.GetType().GetMethod("Invoke");
             object[] parameters = new object[] { data, null };
-            bool parseResult = (bool)invokeMethod.Invoke(parseDelegate, parameters);
+            bool parseResult = invokeMethod != null && (bool)invokeMethod.Invoke(parseDelegate, parameters);
             result = parameters[1];
             return parseResult;
         }
@@ -439,7 +435,7 @@ namespace Nico.Editor
                 string[] kv = pairs[i].Split("=");
                 if (kv.Length != 2)
                 {
-                    Debug.LogWarning($"parse {typeof(T)} failed, not found = in string {pairs[i]}");
+                    UnityEngine.Debug.LogWarning($"parse {typeof(T)} failed, not found = in string {pairs[i]}");
                     result = default;
                     return false;
                 }
@@ -463,9 +459,8 @@ namespace Nico.Editor
             }
 
             // Debug.Log(fields.Length);
-            for (var i = 0; i < fields.Length; i++)
+            foreach (var field in fields)
             {
-                FieldInfo field = fields[i];
                 var fieldName = field.Name;
                 var fieldType = field.FieldType;
 
@@ -473,7 +468,7 @@ namespace Nico.Editor
 
                 if (index == -1)
                 {
-                    Debug.LogWarning($"{structType} parse field {fieldName} failed, not found in string {str}");
+                    UnityEngine.Debug.LogWarning($"{structType} parse field {fieldName} failed, not found in string {str}");
                     continue;
                 }
 
@@ -481,14 +476,12 @@ namespace Nico.Editor
 
                 if (!ParserManager.Parse(typeof(string), dataStr, fieldType, out object value))
                 {
-                    Debug.LogWarning($"{structType} Parse failed when parse field {fieldName} strValue:{dataStr}");
+                    UnityEngine.Debug.LogWarning($"{structType} Parse failed when parse field {fieldName} strValue:{dataStr}");
                     continue;
                 }
 
                 // Debug.Log($"Parse success when parse field {fieldName} strValue:{value}");
                 field.SetValueDirect(__makeref(result), value);
-
-                // Debug.Log(field.GetValue(result));
             }
 
             return true;
@@ -497,9 +490,9 @@ namespace Nico.Editor
         public static bool EnumParser<T>(string value, out T result)
         {
             var parseResult = Enum.Parse(typeof(T), value);
-            if (parseResult is T tParseReuslt)
+            if (parseResult is T tParseResult)
             {
-                result = tParseReuslt;
+                result = tParseResult;
                 return true;
             }
 
@@ -526,9 +519,9 @@ namespace Nico.Editor
         {
             var values = value.Split(_arraySeq);
             result = new List<T>(values.Length);
-            for (var i = 0; i < values.Length; i++)
+            foreach (var v in values)
             {
-                if (!Parser<string, T>.parser(values[i], out var item))
+                if (!Parser<string, T>.parser(v, out var item))
                 {
                     return false;
                 }
@@ -543,9 +536,9 @@ namespace Nico.Editor
         {
             var values = value.Split(_arraySeq);
             result = new Dictionary<TKey, TValue>(values.Length);
-            for (var i = 0; i < values.Length; i++)
+            foreach (var t in values)
             {
-                var kv = values[i].Split(_kvpPairSeq);
+                var kv = t.Split(_kvpPairSeq);
                 if (kv.Length != 2)
                 {
                     return false;
