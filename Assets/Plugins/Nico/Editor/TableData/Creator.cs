@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using UnityEngine;
 
 namespace Nico.Editor
 {
@@ -23,13 +22,60 @@ namespace Nico.Editor
             return data.Parse(id, values);
         }
     }
+    
 
     // CodeGenerator
-    internal static class TableDataDefineCreator
+    internal static class DefineCreator
     {
-        public static string Create(TextAsset asset, string tableName, string[] fieldNames, string[] fieldTypes)
+        internal static string CreateEnum(string template, string enumName, string[] enumValues)
         {
-            string code = asset.text;
+            string code = template;
+
+            //替换表名
+            code = code.Replace("EnumNameTemplate", $"{enumName}");
+            StringBuilder sb = new StringBuilder();
+            //生成成员变量定义
+            foreach (string enumValue in enumValues)
+            {
+                sb.AppendLine($"\t{enumValue},");
+            }
+
+            //替换成员变量
+            code = code.Replace("//fieldsTemplate", sb.ToString());
+            return code;
+        }
+
+        internal static string CreateClass(string template, string className, string[] fieldNames, string[] fieldTypes)
+        {
+            string code = template;
+            //替换表名
+            code = code.Replace("ClassTemplateName", $"{className}");
+            //生成成员变量定义
+            string fields = CreateFields(fieldNames, fieldTypes);
+            //替换成员变量
+            code = code.Replace("//fieldsTemplate", fields);
+
+            return code;
+        }
+
+        internal static string CreateStruct(string template, string structName, string[] fieldNames, string[] fieldTypes)
+        {
+            string code = template;
+
+            //替换表名
+            code = code.Replace("StructTemplateName", $"{structName}");
+
+            //生成成员变量定义
+            string fields = CreateFields(fieldNames, fieldTypes);
+            //替换成员变量
+            code = code.Replace("//fieldsTemplate", fields);
+
+            return code;
+        }
+
+        public static string CreateDataTable(string template, string tableName, string[] fieldNames, string[] fieldTypes)
+        {
+            string code = template;
 
             //替换表名
             code = code.Replace("DataTableNameTemplate", $"{tableName}DataTable");
@@ -39,7 +85,7 @@ namespace Nico.Editor
 
             //生成成员变量定义
             string fields = CreateFields(fieldNames, fieldTypes);
-            
+
             //替换成员变量
             code = code.Replace("//fieldsTemplate", fields);
 
@@ -47,8 +93,8 @@ namespace Nico.Editor
             string parsers = CreateParsers(fieldNames, fieldTypes);
             //替换解析函数
             code = code.Replace("//parseFieldsTemplate", parsers);
-            
-            
+
+
             return code;
         }
 
@@ -60,17 +106,32 @@ namespace Nico.Editor
                 var fieldName = fieldNames[i];
                 var fieldType = fieldTypes[i];
                 //这里 i+1 是因为 Field第一个是id 而 id 是不需要解析的
-                sb.AppendLine(CreateParser(fieldName, fieldType, i ));
+                sb.AppendLine(CreateParser(fieldName, fieldType, i));
                 sb.AppendLine();
             }
 
             return sb.ToString();
         }
+
         internal static string CreateParser(string fieldName, string fieldType, int idx)
         {
-            return $"\tif(!Nico.Editor.ParserManager.Parse<string,{fieldType}>(values[{idx}], out {fieldName})) return false;";
+            // if (fieldType.EndsWith(":enum"))
+            // {
+            //     fieldType = fieldType.Replace(":enum", "");
+            // }
+            // else if (fieldType.EndsWith(":struct"))
+            // {
+            //     fieldType = fieldType.Replace(":struct", "");
+            // }
+            // else if (fieldType.EndsWith(":class"))
+            // {
+            //     fieldType = fieldType.Replace(":class", "");
+            // }
+
+            return
+                $"\tif(!Nico.Editor.ParserManager.Parse<string,{fieldType}>(values[{idx}], out {fieldName})) return false;";
         }
-        
+
         internal static string CreateField(string fieldName, string fieldType)
         {
             return $"\tpublic {fieldType} {fieldName};";

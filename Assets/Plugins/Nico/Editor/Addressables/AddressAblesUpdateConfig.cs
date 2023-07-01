@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UIElements;
 
-namespace Nico.AddressablesUpdater
+namespace Nico.Editor
 {
     [CreateAssetMenu(fileName = "AddressablesUpdateConfig", menuName = "Config/AddressablesUpdateConfig", order = 0)]
     public class AddressAblesUpdateConfig : ScriptableObject
@@ -22,7 +22,7 @@ namespace Nico.AddressablesUpdater
         public AssetLabelReference defaultHotUpdateLabel;
         // 对应文件夹的配置项目
         
-        public TextAsset defualtDataTableDefine;
+        public TableDataConfig tableDataConfig;
 
         public void OnValidate()
         {

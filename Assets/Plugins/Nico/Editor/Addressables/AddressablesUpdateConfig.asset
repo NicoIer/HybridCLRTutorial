@@ -50,4 +50,4 @@ MonoBehaviour:
       value: hot_update_scene
   defaultHotUpdateLabel:
     m_LabelString: hot_update_dll
-  defualtDataTableDefine: {fileID: 4900000, guid: bfac826c0f3741ae877849b51ad8ceec, type: 3}
+  tableDataConfig: {fileID: 11400000, guid: daa32568e2996204ca23670d3a1288ab, type: 2}

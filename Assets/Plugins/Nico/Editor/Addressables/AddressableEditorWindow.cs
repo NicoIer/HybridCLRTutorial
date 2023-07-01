@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using HybridCLR.Editor.Commands;
-using Nico.AddressablesUpdater;
 using Nico.Editor;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -274,13 +273,13 @@ namespace Nico.Edotor
 
         private void ImportDataTable()
         {
-            string result = TableDataDefineCreator.Create(
-                config.defualtDataTableDefine,
-                "Test",
-                new string[] { "id" ,"name","pos"},
-                new string[] { "int" ,"string","Vector2Int"}
-            );
-            Debug.Log(result);
+            // string result = DefineCreator.CreateDataTable(
+            //     config.tableDataConfig.DataTableTemplate,
+            //     "Test",
+            //     new string[] { "id" ,"name","pos"},
+            //     new string[] { "int" ,"string","Vector2Int"}
+            // );
+            // Debug.Log(result);
             //打开文件夹选择窗口
             // string folderPath = EditorUtility.OpenFolderPanel("选择数据表所在的文件夹", "", "");
             // if (string.IsNullOrEmpty(folderPath))
