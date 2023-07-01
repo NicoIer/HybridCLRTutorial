@@ -6,6 +6,18 @@ namespace Nico.Tests
     [TestFixture]
     public class ParseTests
     {
+
+        public enum ParseTestEnum01
+        {
+            X1,X2,X3
+        }
+        [Test]
+        public void ParseEnum()
+        {
+            ParserManager.Parse<string,ParseTestEnum01>("X1",out ParseTestEnum01 result);
+            Assert.AreEqual(ParseTestEnum01.X1,result);
+            
+        }
         [Test]
         public void ParseInt()
         {
