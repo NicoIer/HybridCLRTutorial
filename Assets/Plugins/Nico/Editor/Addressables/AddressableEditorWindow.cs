@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using HybridCLR.Editor.Commands;
 using Nico.AddressablesUpdater;
+using Nico.Editor;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
@@ -110,7 +111,7 @@ namespace Nico.Edotor
 
             _hotUpdateLabelSelect = hotUpdate.Q<DropdownField>("label");
             _hotUpdateLabelSelect.choices = config.labels.Values.ToList();
-            _hotUpdateLabelSelect.value = config.defaultHotUpdateLabel;
+            _hotUpdateLabelSelect.value = config.defaultHotUpdateLabel.labelString;
 
             _hotUpdateTargetSelect = hotUpdate.Q<DropdownField>("target");
             //获取BuildTarget的所有枚举值
@@ -178,7 +179,7 @@ namespace Nico.Edotor
             var paths = SearchAssetsByFolder(folderPath, true);
             foreach (var assetPath in paths)
             {
-                Debug.Log(assetPath);
+                // Debug.Log(assetPath);
                 var guid = AssetDatabase.AssetPathToGUID(assetPath);
                 //添加资源到组中
                 var entry = config.settings.CreateOrMoveEntry(guid, group, false, false);
@@ -193,7 +194,11 @@ namespace Nico.Edotor
                 }
             }
 
-            var schema = group.AddSchema<BundledAssetGroupSchema>();
+            var schema = group.GetSchema<BundledAssetGroupSchema>();
+            if (schema == null)
+            {
+                group.AddSchema<BundledAssetGroupSchema>();
+            }
         }
 
         private List<string> SearchAssetsByFolder(string folderPath, bool deep = true)
@@ -263,19 +268,28 @@ namespace Nico.Edotor
             }
 
             AssetDatabase.Refresh();
-            Debug.Log("热更dll完成");
+            // Debug.Log("热更dll完成");
             _hotUpdateButton.SetEnabled(true);
         }
 
         private void ImportDataTable()
         {
+            string result = TableDataDefineCreator.Create(
+                config.defualtDataTableDefine,
+                "Test",
+                new string[] { "id" ,"name","pos"},
+                new string[] { "int" ,"string","Vector2Int"}
+            );
+            Debug.Log(result);
             //打开文件夹选择窗口
-            string folderPath = EditorUtility.OpenFolderPanel("选择数据表所在的文件夹", "", "");
-            if (string.IsNullOrEmpty(folderPath))
-            {
-                return;
-            }
-            Debug.Log(folderPath);
+            // string folderPath = EditorUtility.OpenFolderPanel("选择数据表所在的文件夹", "", "");
+            // if (string.IsNullOrEmpty(folderPath))
+            // {
+            //     return;
+            // }
+            //
+            // Debug.Log(folderPath);
+            //
         }
 
         #endregion

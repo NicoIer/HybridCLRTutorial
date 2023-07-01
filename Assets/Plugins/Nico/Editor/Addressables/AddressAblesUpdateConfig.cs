@@ -2,6 +2,7 @@
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UIElements;
 
 namespace Nico.AddressablesUpdater
@@ -18,8 +19,10 @@ namespace Nico.AddressablesUpdater
         public SerializableDictionary<string, AddressableAssetGroup> groups = new();
         [SerializeField] public SerializableDictionary<string, string> labels = new();
 
-        public string defaultHotUpdateLabel = "hot_update_dll";
+        public AssetLabelReference defaultHotUpdateLabel;
         // 对应文件夹的配置项目
+        
+        public TextAsset defualtDataTableDefine;
 
         public void OnValidate()
         {

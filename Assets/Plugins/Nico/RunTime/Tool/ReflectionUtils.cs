@@ -32,5 +32,23 @@ namespace Nico
                 }
             }
         }
+
+        //拿到type的所有泛型实现类 
+        public static IEnumerable<Type> GetGenericTypes(Type type)
+        {
+            type = type.GetGenericTypeDefinition();
+            var assemblies = _appDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                var ts = assembly.GetTypes();
+                foreach (var t in ts)
+                {
+                    if (t.IsGenericType && t.GetGenericTypeDefinition() == type)
+                    {
+                        yield return t;
+                    }
+                }
+            }
+        }
     }
 }
