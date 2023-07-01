@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
@@ -71,7 +70,7 @@ namespace Nico.Editor
                 MethodInfo arrayParseMethod = __generate_string_parser(arrayType);
                 __register_parser_method(arrayParseMethod);
 
-                
+
                 Type listType = typeof(List<>).MakeGenericType(resultType);
                 // Debug.Log("listType:" + listType);
                 MethodInfo listParseMethod = __generate_string_parser(listType);
@@ -101,7 +100,9 @@ namespace Nico.Editor
                 if (resultType.IsList())
                 {
                     Type eleType = resultType.GetGenericArguments()[0];
-                    __generate_string_parser(eleType);
+                    //确保泛型类型已经注册
+                    MethodInfo childMethodInfo = __generate_string_parser(eleType);
+                    __register_parser_method(childMethodInfo);
                     return _buildInListParser.MakeGenericMethod(eleType);
                 }
                 //TODO other generic type
@@ -111,19 +112,21 @@ namespace Nico.Editor
             if (resultType.IsArray)
             {
                 Type eleType = resultType.GetElementType();
-                __generate_string_parser(eleType);
+                //确保元素类型已经注册
+                MethodInfo childMethodInfo = __generate_string_parser(eleType); // 递归生成解析器
+                __register_parser_method(childMethodInfo);
                 return _buildInArrayParser.MakeGenericMethod(eleType);
             }
 
-            throw new NotImplementedException();
-            // //是class 或者 struct
-            // if (resultType.IsClass || resultType.IsStruct())
-            // {
-            //     __generate_string_parser(resultType);
-            //     MethodInfo methodInfo = _buildInStructAndClassParser.MakeGenericMethod(resultType);
-            //     __register_parser_method(methodInfo);
-            //     return;
-            // }
+
+            //是class 或者 struct
+            if (resultType.IsClass || resultType.IsStruct())
+            {
+                // Debug.Log($"generate class or struct parser {resultType}");
+                return _buildInStructAndClassParser.MakeGenericMethod(resultType);
+            }
+
+            return null;
         }
 
         private static void __register_parser_method(MethodInfo methodInfo)
@@ -203,10 +206,20 @@ namespace Nico.Editor
 
         public static bool Parse(Type dataType, object data, Type resultType, out object result)
         {
-            result = null;
-            FieldInfo parserField = __get_parser_field_info(dataType, resultType); //拿到Parser<,>.parser
-            if (parserField.GetValue(null) is not Delegate parser) return false; //拿到Parser<,>.parser的值
-            return (bool)parser.DynamicInvoke(data, result); //调用Parser<,>.parser
+            //动态调用  public static bool Parse<TData, TResult>(TData data, out TResult result)
+            //bool ParseDelegate<in TData, TResult>(TData value, out TResult result);
+            Delegate parseDelegate = __get_parser_field_info(dataType, resultType).GetValue(null) as Delegate;
+            if (parseDelegate == null)
+            {
+                result = null;
+                return false;
+            }
+
+            MethodInfo invokeMethod = parseDelegate.GetType().GetMethod("Invoke");
+            object[] parameters = new object[] { data, null };
+            bool parseResult = (bool)invokeMethod.Invoke(parseDelegate, parameters);
+            result = parameters[1];
+            return parseResult;
         }
 
         public static bool Parse<TData, TResult>(TData data, out TResult result)
@@ -408,37 +421,74 @@ namespace Nico.Editor
         }
     }
 
-    internal static class BuildInStringGenericParser
+    public static class BuildInStringGenericParser
     {
         private const string _arraySeq = ";";
         private const string _kvpPairSeq = ":";
 
 
-        public static bool StructAndClassParser<T>(string[] fieldNames, string[] filedValues, out T result)
+        public static bool StructAndClassParser<T>(string str, out T result)
         {
+            //xxx = 0,xxx1 = "123",xxx2 = 1.2f
+            string[] pairs = str.Trim().Split(",");
+            string[] fieldNames = new string[pairs.Length];
+            string[] filedValues = new string[pairs.Length];
+
+            for (int i = 0; i < pairs.Length; i++)
+            {
+                string[] kv = pairs[i].Split("=");
+                if (kv.Length != 2)
+                {
+                    Debug.LogWarning($"parse {typeof(T)} failed, not found = in string {pairs[i]}");
+                    result = default;
+                    return false;
+                }
+
+                fieldNames[i] = kv[0].Trim();
+                filedValues[i] = kv[1].Trim();
+                // Debug.Log($"key{fieldNames[i]},value:{filedValues[i]}");
+            }
+
+
             var structType = typeof(T);
             var fields = structType.GetFields();
             result = Activator.CreateInstance<T>();
+
+
+            Dictionary<string, int> name2Idx = new Dictionary<string, int>();
+            if (name2Idx == null) throw new ArgumentNullException(nameof(name2Idx));
+            for (int i = 0; i < fieldNames.Length; i++)
+            {
+                name2Idx.Add(fieldNames[i], i);
+            }
+
+            // Debug.Log(fields.Length);
             for (var i = 0; i < fields.Length; i++)
             {
                 FieldInfo field = fields[i];
                 var fieldName = field.Name;
                 var fieldType = field.FieldType;
-                var index = Array.IndexOf(fieldNames, fieldName);
+
+                int index = name2Idx[fieldName];
+
                 if (index == -1)
                 {
-                    return false;
+                    Debug.LogWarning($"{structType} parse field {fieldName} failed, not found in string {str}");
+                    continue;
                 }
 
                 string dataStr = filedValues[index];
 
-                if (!ParserManager.Parse(typeof(string), dataStr, fieldType, out var data))
+                if (!ParserManager.Parse(typeof(string), dataStr, fieldType, out object value))
                 {
                     Debug.LogWarning($"{structType} Parse failed when parse field {fieldName} strValue:{dataStr}");
                     continue;
                 }
 
-                field.SetValue(result, data);
+                // Debug.Log($"Parse success when parse field {fieldName} strValue:{value}");
+                field.SetValueDirect(__makeref(result), value);
+
+                // Debug.Log(field.GetValue(result));
             }
 
             return true;
