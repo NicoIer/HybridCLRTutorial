@@ -6,7 +6,9 @@
         "UnityEditor.TestRunner",
         "Nico.RunTime",
         "Nico.Editor",
-        "DataTable"
+        "DataTable",
+        "Nico.DataTable",
+        "Nico.Util"
     ],
     "includePlatforms": [
         "Editor"
