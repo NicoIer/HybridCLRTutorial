@@ -27,7 +27,7 @@ MonoBehaviour:
           choiceName: out
           nextGroupName: 
           nextNodeName: 2
-        position: {x: 190, y: 225}
+        position: {x: 131.33333, y: 125.333336}
     - key: 2
       value:
         name: 2
@@ -40,7 +40,7 @@ MonoBehaviour:
           choiceName: "\u8FD9\u662F\u9009\u98791"
           nextGroupName: 
           nextNodeName: 3
-        position: {x: 452, y: 137}
+        position: {x: 455.33334, y: 190.66667}
     - key: 3
       value:
         name: 3
@@ -49,7 +49,7 @@ MonoBehaviour:
         groupName: 
         dialogTypeEnum: 1
         choices: []
-        position: {x: 829, y: 82}
+        position: {x: 829.3333, y: 82}
   groupNodeData:
     list: []
   groupDatas: []

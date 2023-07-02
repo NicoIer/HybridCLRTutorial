@@ -21,10 +21,6 @@ MonoBehaviour:
     m_Address: DialogSystem/DialogGraph-RunTime
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 9d52cee8ccccb7844a273c5d1aee436c
-    m_Address: DialogSystem/DialogGraph
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
   m_SchemaSet:
