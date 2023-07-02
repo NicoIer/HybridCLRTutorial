@@ -7,19 +7,28 @@ namespace Nico
 {
     public static class TableDataManager
     {
-        private static bool _initialized = false;
-        private static Dictionary<Type, IDataTable> _dataTables = new Dictionary<Type, IDataTable>();
+        private static readonly Dictionary<Type, IDataTable> _dataTables = new Dictionary<Type, IDataTable>();
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        public static void Initialize()
+        public static void Init()
         {
             _dataTables.Clear();
             var types = ReflectionUtils.GetTypesWithInterface<IDataTable>();
 
             foreach (var type in types)
             {
-                //从 Addressables 中加载
-                var dataTable = Addressables.LoadAssetAsync<ScriptableObject>("DataTable/"+type.Name).WaitForCompletion();
+                ScriptableObject dataTable = null;
+                try
+                {
+                    //从 Addressables 中加载
+                    dataTable = Addressables.LoadAssetAsync<ScriptableObject>("DataTable/" + type.Name)
+                        .WaitForCompletion();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"load {type.Name} failed skip it.  error:{e}");
+                    continue;
+                }
+
                 if (dataTable == null)
                 {
                     Debug.LogError($"[TableDataManager] Load {type.Name} failed");
@@ -34,21 +43,15 @@ namespace Nico
 
                 _dataTables.Add(type, table);
             }
-
-            _initialized = true;
-            Application.quitting -= Reset;
-            Application.quitting += Reset;
         }
 
-        private static void Reset()
+        public static void OnApplicationQuitting()
         {
-            _initialized = false;
+            _dataTables.Clear();
         }
-
 
         public static TData Get<TData>(int id) where TData : ITableData
         {
-            if (!_initialized) Initialize();
             var type = typeof(TData);
             if (!_dataTables.TryGetValue(type, out IDataTable dataTable))
             {
@@ -60,7 +63,6 @@ namespace Nico
 
         public static TDataTable Get<TDataTable>() where TDataTable : IDataTable
         {
-            if (!_initialized) Initialize();
             var type = typeof(TDataTable);
             if (!_dataTables.TryGetValue(type, out IDataTable dataTable))
             {
