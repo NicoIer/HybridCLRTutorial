@@ -1,0 +1,18 @@
+{
+    "name": "Nico.DialogSystem.Editor",
+    "rootNamespace": "Nico.DialogSystem.Editor",
+    "references": [
+        "GUID:41125c6b873543c2800ba4bccab74d3f",
+        "GUID:b963bc3b082558e40ba09a4faf942e10",
+        "GUID:c670777f152540998afeaa3ecacc3c84"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

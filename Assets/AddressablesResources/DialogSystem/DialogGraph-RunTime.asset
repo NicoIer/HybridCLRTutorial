@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 259e9cf9f2044e259644a2ad75b09228, type: 3}
+  m_Name: DialogGraph-RunTime
+  m_EditorClassIdentifier: 
+  _globalNodes:
+    list:
+    - key: 1
+      value:
+        name: 1
+        content: "\u6B22\u8FCE\u6765\u5230\u5BF9\u8BDD\u8282\u70B9\u7F16\u8F91\u5668"
+        group: 
+        InGroup: 0
+        dialogTypeEnum: 0
+        choices:
+          list:
+          - key: out
+            value:
+              isNextInGroup: 0
+              choiceName: out
+              nextGroupName: 
+              nextNodeName: 2
+    - key: 2
+      value:
+        name: 2
+        content: "\u4E0B\u9762\u5C5E\u6027\u4E00\u4E0B\u7B80\u5355\u7684\u4F7F\u7528\u5427"
+        group: 
+        InGroup: 0
+        dialogTypeEnum: 1
+        choices:
+          list:
+          - key: "\u8FD9\u662F\u9009\u98791"
+            value:
+              isNextInGroup: 0
+              choiceName: "\u8FD9\u662F\u9009\u98791"
+              nextGroupName: 
+              nextNodeName: 3
+    - key: 3
+      value:
+        name: 3
+        content: Default Content
+        group: 
+        InGroup: 0
+        dialogTypeEnum: 1
+        choices:
+          list: []
+  _groupNodes:
+    list: []
