@@ -94,6 +94,8 @@ MonoBehaviour:
     - hot_update_dll
     - aot_dll
     - hot_update_scene
+    - data_table
+    - pool_object_prefab
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: f1f9471651e11674ab46bb5a26cdbc4e, type: 2}

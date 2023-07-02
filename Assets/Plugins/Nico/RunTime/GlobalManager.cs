@@ -20,4 +20,5 @@ namespace Nico
             TableDataManager.OnApplicationQuitting();
         }
     }
+    
 }

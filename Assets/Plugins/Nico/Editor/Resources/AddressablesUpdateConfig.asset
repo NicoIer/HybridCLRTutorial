@@ -12,16 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d8720507f4644ecb238cfd2b84e6acd, type: 3}
   m_Name: AddressablesUpdateConfig
   m_EditorClassIdentifier: 
+  resourcesPath: Assets/AddressablesResources
   uxml: {fileID: 9197481963319205126, guid: dadbb45c51e6ba344bb08d2adb40d997, type: 3}
   uss: {fileID: 7433441132597879392, guid: 0afa6931b9ef9c44fa666929c66e15bb, type: 3}
   folderToLabel:
     list:
+    - key: HotUpdateScene
+      value: hot_update_scene
+    - key: DataTable
+      value: data_table
+    - key: PoolObjectPrefab
+      value: pool_object_prefab
     - key: HotUpdateDll
       value: hot_update_dll
     - key: AOTDll
       value: aot_dll
-    - key: HotUpdateScene
-      value: hot_update_scene
   groups:
     list:
     - key: Built In Data
@@ -38,16 +43,18 @@ MonoBehaviour:
       value: {fileID: 11400000, guid: 4602525cf40a8ec40b05b4321193aa97, type: 2}
     - key: HotUpdateScene
       value: {fileID: 11400000, guid: 9d3d94eff7925c943b21e4aff0f9f968, type: 2}
+    - key: DialogSystem
+      value: {fileID: 11400000, guid: bb734bb0e1b489e46bdc2cf85d3230df, type: 2}
+    - key: DataTable
+      value: {fileID: 11400000, guid: e1f37a24ecf4fd94ab3b150ac7b83b75, type: 2}
   labels:
-    list:
-    - key: default
-      value: default
-    - key: hot_update_dll
-      value: hot_update_dll
-    - key: aot_dll
-      value: aot_dll
-    - key: hot_update_scene
-      value: hot_update_scene
+  - default
+  - hot_update_dll
+  - aot_dll
+  - hot_update_scene
+  - data_table
+  - pool_obj_prefab
+  - pool_object_prefab
   defaultHotUpdateLabel:
     m_LabelString: hot_update_dll
   tableDataConfig: {fileID: 11400000, guid: daa32568e2996204ca23670d3a1288ab, type: 2}

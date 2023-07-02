@@ -25,7 +25,7 @@ namespace Nico.Tests
                 new string[] { "id", "pos" },
                 new string[] { "int", nameof(Vector2Int) }
             );
-            var scriptPath = $"{config.DataTableScriptsPath}/{className}.cs";
+            var scriptPath = $"{config.dataTableScriptsPath}/{className}.cs";
             Nico.FileUtil.Write(scriptPath, code);
             AssetDatabase.Refresh();
         }
@@ -40,7 +40,7 @@ namespace Nico.Tests
                 {
                     "X1", "X2", "X3", "X4"
                 });
-            var scriptPath = $"{config.DataTableScriptsPath}/{enumName}.cs";
+            var scriptPath = $"{config.dataTableScriptsPath}/{enumName}.cs";
             Nico.FileUtil.Write(scriptPath, code);
             AssetDatabase.Refresh();
         }
@@ -57,7 +57,7 @@ namespace Nico.Tests
                 new string[] { "name", "pos" },
                 new string[] { "string", "Vector2Int" }
             );
-            var scriptPath = $"{config.DataTableScriptsPath}/{tableName}.cs";
+            var scriptPath = $"{config.dataTableScriptsPath}/{tableName}.cs";
             Nico.FileUtil.Write(scriptPath, tableCode);
             AssetDatabase.Refresh();
         }
@@ -65,7 +65,7 @@ namespace Nico.Tests
         [Test]
         public void AssemblyDefineCreateTest()
         {
-            var definePath = $"{config.DataTableScriptsPath}/DataTable.asmdef";
+            var definePath = $"{config.dataTableScriptsPath}/DataTable.asmdef";
             Nico.FileUtil.ReplaceContent(config.tableDataConfig.TDataTableAssemblyDefineTemplate, definePath);
             AssetDatabase.Refresh();
         }

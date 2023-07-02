@@ -32,7 +32,7 @@ namespace Nico.Editor
                     continue;
                 }
 
-                var folderPath = _config.DataTableAssetFolderPath;
+                var folderPath = _config.dataTableAssetFolderPath;
                 var savePath = Path.Combine(folderPath, $"{table.GetType().Name}.asset");
                 //保存资源
                 if (!File.Exists(savePath))
@@ -121,7 +121,7 @@ namespace Nico.Editor
             Assembly assembly = null;
             try
             {
-                assembly = Assembly.Load("DataTable");
+                assembly = Assembly.Load(GlobalConst.DATATABLE_FOLDER_NAME);
             }
             catch (FileNotFoundException e)
             {
@@ -184,18 +184,18 @@ namespace Nico.Editor
             {
                 string defineName = kvp.Key;
                 string defineCode = kvp.Value;
-                Nico.FileUtil.Write($"{_config.DataTableScriptsPath}/{defineName}.cs", defineCode);
+                Nico.FileUtil.Write($"{_config.dataTableScriptsPath}/{defineName}.cs", defineCode);
             }
 
             foreach (var kvp in tableCodeDict)
             {
                 string tableName = kvp.Key;
                 string tableCode = kvp.Value;
-                Nico.FileUtil.Write($"{_config.DataTableScriptsPath}/{tableName}DataTable.cs", tableCode);
+                Nico.FileUtil.Write($"{_config.dataTableScriptsPath}/{tableName}DataTable.cs", tableCode);
             }
 
             //生成程序集定义
-            Nico.FileUtil.Write($"{_config.DataTableScriptsPath}/DataTable.asmdef",
+            Nico.FileUtil.Write($"{_config.dataTableScriptsPath}/DataTable.asmdef",
                 _config.tableDataConfig.TDataTableAssemblyDefineTemplate);
         }
 

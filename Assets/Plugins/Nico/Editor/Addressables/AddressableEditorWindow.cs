@@ -114,7 +114,7 @@ namespace Nico.Edotor
 
 
             _hotUpdateLabelSelect = hotUpdate.Q<DropdownField>("label");
-            _hotUpdateLabelSelect.choices = config.labels.Values.ToList();
+            _hotUpdateLabelSelect.choices = config.labels;
             _hotUpdateLabelSelect.value = config.defaultHotUpdateLabel.labelString;
 
             _hotUpdateTargetSelect = hotUpdate.Q<DropdownField>("target");
@@ -157,7 +157,7 @@ namespace Nico.Edotor
         {
             _updateAddressableProgressBar.value = 0;
             _updateAddressableProgressBar.title = "0%";
-            string searchFolder = config.AddressablesResourcesPath;
+            string searchFolder = config.resourcesPath;
             //搜索所有searchFolder下的文件夹
             string[] folders = AssetDatabase.FindAssets("t:Folder", new[] { searchFolder });
             //遍历所有文件夹
