@@ -1,13 +1,15 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor.Callbacks;
+using UnityEngine;
 
 namespace Nico.Editor
 {
     
-#if UNITY_EDITOR
+
     public delegate bool ParseDelegate<in TData, TResult>(TData value, out TResult result);
 
     internal static class Parser<TData, TResult>
@@ -431,25 +433,37 @@ namespace Nico.Editor
 
     public static class BuildInStringGenericParser
     {
-        private const string _arraySeq = ";";
+        private const string _arraySeq = "#";
         private const string _kvpPairSeq = ":";
+        private const string _fieldSeq = ";";
+        private const string _fieldKvSeq = "=";
 
 
         public static bool StructAndClassParser<T>(string str, out T result)
         {
-            //xxx = 0,xxx1 = "123",xxx2 = 1.2f
-            string[] pairs = str.Trim().Split(",");
+            // Debug.Log($"StructAndClassParser:{str}");
+            //xxx = 0;xxx1 = "123";xxx2 = 1.2f
+            string[] pairs = str.Trim().Split(_fieldSeq);
             string[] fieldNames = new string[pairs.Length];
             string[] filedValues = new string[pairs.Length];
 
             for (int i = 0; i < pairs.Length; i++)
             {
-                string[] kv = pairs[i].Split("=");
+                if (string.IsNullOrWhiteSpace(pairs[i]))
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(pairs[i]))
+                {
+                    continue;
+                }
+                
+                string[] kv = pairs[i].Split(_fieldKvSeq);
                 if (kv.Length != 2)
                 {
-                    UnityEngine.Debug.LogWarning($"parse {typeof(T)} failed, not found = in string {pairs[i]}");
-                    result = default;
-                    return false;
+                    UnityEngine.Debug.LogWarning($"parse {typeof(T)} failed, not found = in {pairs[i]}");
+                    continue;
                 }
 
                 fieldNames[i] = kv[0].Trim();
@@ -464,9 +478,12 @@ namespace Nico.Editor
 
 
             Dictionary<string, int> name2Idx = new Dictionary<string, int>();
-            if (name2Idx == null) throw new ArgumentNullException(nameof(name2Idx));
             for (int i = 0; i < fieldNames.Length; i++)
             {
+                if (fieldNames[i] == null)
+                {
+                    continue;
+                }
                 name2Idx.Add(fieldNames[i], i);
             }
 

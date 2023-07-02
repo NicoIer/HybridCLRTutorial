@@ -58,11 +58,6 @@ namespace Nico.Editor
             }
             AssetDatabase.CreateAsset(so, path);
         }
-
-        public static T LoadScriptableObject<T>(string path)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 #endif

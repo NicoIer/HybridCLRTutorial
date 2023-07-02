@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Nico.Editor
+namespace Nico
 {
     public static class FileUtil
     {
@@ -12,9 +12,10 @@ namespace Nico.Editor
                 System.IO.Directory.CreateDirectory(folderPath);
             }
 
+            if (File.Exists(path)) return;
             System.IO.File.Create(path).Dispose();
         }
-        
+
         public static void Write(string path, string text)
         {
             if (!System.IO.File.Exists(path))

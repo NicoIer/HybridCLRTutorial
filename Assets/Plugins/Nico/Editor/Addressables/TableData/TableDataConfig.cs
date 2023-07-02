@@ -14,7 +14,7 @@ namespace Nico.Editor
         public string DataTableTemplate => tDataTableTemplate.text;
         public string TEnumTemplate => tEnumTemplate.text;
         public string TClassTemplate => tClassTemplate.text;
-        public string TStrauctTemplate => tStructTemplate.text;
+        public string TStructTemplate => tStructTemplate.text;
 
         public string TDataTableAssemblyDefineTemplate => tDataTableAssemblyDefineTemplate.text;
     }

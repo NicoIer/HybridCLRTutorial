@@ -1,29 +1,78 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace Nico.Editor
 {
     public static class TableDataCreator
     {
-        internal static bool CreateData(out ITableData tableData, Type type, int id, string[] values)
+        internal static bool CreateData(out ITableData tableData, Type type, string[] values)
         {
             tableData = null;
-            var data = Activator.CreateInstance(type) as ITableData;
-            if (data == null)
+            if (type == null)
             {
+                Debug.LogError("CreateData: type is null");
                 return false;
             }
 
-            return data.Parse(id, values);
+            tableData = Activator.CreateInstance(type) as ITableData;
+            if (tableData == null)
+            {
+                Debug.LogError("CreateData: tableData is null");
+                return false;
+            }
+
+            return tableData.Parse(values);
+        }
+
+        internal static bool CreateTable(out IDataTable table, Type type)
+        {
+            table = null;
+            if (type == null)
+            {
+                Debug.LogError("CreateTable: type is null");
+                return false;
+            }
+
+            table = ScriptableObject.CreateInstance(type) as IDataTable;
+            if (table == null)
+            {
+                Debug.LogError("CreateTable: table is null");
+                return false;
+            }
+
+            return true;
         }
     }
-    
+
 
     // CodeGenerator
     public static class DefineCreator
     {
-        public static string CreateEnum(string template, string enumName, string[] enumValues)
+        private static TableDataConfig _config = Resources.Load<TableDataConfig>("TableDataConfig");
+
+        public static string CreateEnum(string enumName, IEnumerable<string> enumValues)
+        {
+            return CreateEnum(_config.TEnumTemplate, enumName, enumValues);
+        }
+
+        public static string CreateClass(string className, string[] fieldNames, string[] fieldTypes)
+        {
+            return CreateClass(_config.TClassTemplate, className, fieldNames, fieldTypes);
+        }
+
+        public static string CreateStruct(string structName, string[] fieldNames, string[] fieldTypes)
+        {
+            return CreateStruct(_config.TStructTemplate, structName, fieldNames, fieldTypes);
+        }
+
+        public static string CreateDataTable(string tableName, string[] fieldNames, string[] fieldTypes)
+        {
+            return CreateDataTable(_config.DataTableTemplate, tableName, fieldNames, fieldTypes);
+        }
+
+        public static string CreateEnum(string template, string enumName, IEnumerable<string> enumValues)
         {
             string code = template;
 
@@ -69,7 +118,8 @@ namespace Nico.Editor
             return code;
         }
 
-        public static string CreateDataTable(string template, string tableName, string[] fieldNames, string[] fieldTypes)
+        public static string CreateDataTable(string template, string tableName, string[] fieldNames,
+            string[] fieldTypes)
         {
             string code = template;
 

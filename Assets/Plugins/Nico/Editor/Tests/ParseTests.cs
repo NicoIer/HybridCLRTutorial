@@ -93,37 +93,37 @@ namespace Nico.Tests
         [Test]
         public void ParseIntArray()
         {
-            ParserManager.Parse<string, int[]>("1;2;3;4", out int[] result);
+            ParserManager.Parse<string, int[]>("1#2#3#4", out int[] result);
             Assert.AreEqual(1, result[0]);
             Assert.AreEqual(2, result[1]);
             Assert.AreEqual(3, result[2]);
             Assert.AreEqual(4, result[3]);
-            bool re = ParserManager.Parse<string, int[]>("1;2;3;4-", out result);
+            bool re = ParserManager.Parse<string, int[]>("1#2#3#4-", out result);
             Assert.AreEqual(false, re);
         }
 
         [Test]
         public void ParseFloatArray()
         {
-            ParserManager.Parse<string, float[]>("1.1;2.2;3.3;4.4", out float[] result);
+            ParserManager.Parse<string, float[]>("1.1#2.2#3.3#4.4", out float[] result);
             Assert.AreEqual(1.1f, result[0]);
             Assert.AreEqual(2.2f, result[1]);
             Assert.AreEqual(3.3f, result[2]);
             Assert.AreEqual(4.4f, result[3]);
-            bool re = ParserManager.Parse<string, float[]>("1.1;2.2;3.3;4.4-", out result);
+            bool re = ParserManager.Parse<string, float[]>("1.1#2.2#3.3#4.4-", out result);
             Assert.AreEqual(false, re);
         }
 
         [Test]
         public void ParseStringArray()
         {
-            //string分割符是\; 表现形式为\\;
-            ParserManager.Parse<string, string[]>("1;2;3;4", out string[] result);
+            //string分割符是;
+            ParserManager.Parse<string, string[]>("1#2#3#4", out string[] result);
             Assert.AreEqual("1", result[0]);
             Assert.AreEqual("2", result[1]);
             Assert.AreEqual("3", result[2]);
             Assert.AreEqual("4", result[3]);
-            bool re = ParserManager.Parse<string, string[]>("1;2;3;4-", out result);
+            bool re = ParserManager.Parse<string, string[]>("1#2#3#4-", out result);
             Assert.AreEqual("4-", result[3]);
             Assert.AreEqual(true, re);
         }
@@ -132,7 +132,7 @@ namespace Nico.Tests
         [Test]
         public void TestParseBuildinInClass()
         {
-            string str = "id=123,name=Test";
+            string str = "id=123;name=Test";
             BuildInStringGenericParser.StructAndClassParser(str, out MyTestParseClass result);
             Assert.AreEqual(123, result.id);
             Assert.AreEqual("Test", result.name);
@@ -142,7 +142,7 @@ namespace Nico.Tests
         public void TestParseClass()
         {
             Assert.AreEqual(true, ParserManager.Contains(typeof(string), typeof(MyTestParseClass)));
-            string str = "id=123,name=Test";
+            string str = "id=123;name=Test";
             bool re = ParserManager.Parse<string, MyTestParseClass>(str, out MyTestParseClass result);
             Assert.AreEqual(true, re);
             Assert.AreEqual(123, result.id);

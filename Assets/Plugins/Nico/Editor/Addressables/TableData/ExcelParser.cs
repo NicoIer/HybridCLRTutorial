@@ -17,19 +17,26 @@ namespace Nico.Editor
             //获取第一个sheet
             foreach (ExcelWorksheet sheet in excelPackage.Workbook.Worksheets)
             {
-                string[][] values = ReadSheet(sheet);
+                if (!ReadSheet(sheet, out string[][] values)) continue;
                 stringsMap.Add(sheet.Name, values);
             }
 
             return stringsMap;
         }
 
-        private static string[][] ReadSheet(ExcelWorksheet worksheet)
+        private static bool ReadSheet(ExcelWorksheet worksheet, out string[][] values)
         {
+            values = null;
+            if (worksheet.Dimension is null)
+            {
+                Debug.LogWarning($"ExcelParser: worksheet.Dimension is null at worksheet:{worksheet.Name}");
+                return false;
+            }
+
             int rowCount = worksheet.Dimension.Rows;
             int colCount = worksheet.Dimension.Columns;
-
-            string[][] values = new string[rowCount][];
+            // Debug.Log($"[{rowCount}][{colCount}]");
+            values = new string[rowCount][];
 
             for (int row = 1; row <= rowCount; row++)
             {
@@ -39,8 +46,7 @@ namespace Nico.Editor
                     var value = worksheet.Cells[row, col].Value;
                     if (value is null)
                     {
-                        Debug.LogWarning(
-                            $"ExcelParser: value is null at worksheet:{worksheet.Name} row:{row} col:{col}");
+                        // Debug.LogWarning($"ExcelParser: value is null at worksheet:{worksheet.Name} row:{row} col:{col}");
                         values[row - 1][col - 1] = "";
                         continue;
                     }
@@ -49,7 +55,7 @@ namespace Nico.Editor
                 }
             }
 
-            return values;
+            return true;
         }
 
 
