@@ -14,7 +14,7 @@ namespace Nico.Editor
 
             System.IO.File.Create(path).Dispose();
         }
-
+        
         public static void Write(string path, string text)
         {
             if (!System.IO.File.Exists(path))

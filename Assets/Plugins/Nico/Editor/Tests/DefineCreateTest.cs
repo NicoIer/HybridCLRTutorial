@@ -16,19 +16,35 @@ namespace Nico.Tests
             AssetDatabase.LoadAssetAtPath<AddressAblesUpdateConfig>(_folderPath + "AddressablesUpdateConfig.asset");
 
         [Test]
-        public void CreateEnum()
+        public void CreateClass()
         {
+            string className = "TestClass";
+            string code = DefineCreator.CreateClass(
+                config.tableDataConfig.TClassTemplate,
+                className,
+                new string[] { "id", "pos" },
+                new string[] { "int", nameof(Vector2Int) }
+            );
+            var scriptPath = $"{config.DataTableScriptsPath}/{className}.cs";
+            Nico.Editor.FileUtil.Write(scriptPath, code);
+            AssetDatabase.Refresh();
         }
 
         [Test]
-        public void TestDataTable()
+        public void CreateEnum()
         {
-            TestData data = default;
-            data.Parse(1, new string[] { "1", "124", "123,0" });
-            Assert.AreEqual(true, 1 == data.id);
-            Assert.AreEqual(true, "124" == data.name);
-            Assert.AreEqual(true, new Vector2Int(123, 0) == data.pos);
+            string enumName = "TestEnum";
+            string code = DefineCreator.CreateEnum(
+                config.tableDataConfig.TEnumTemplate, enumName,
+                new string[]
+                {
+                    "X1", "X2", "X3", "X4"
+                });
+            var scriptPath = $"{config.DataTableScriptsPath}/{enumName}.cs";
+            Nico.Editor.FileUtil.Write(scriptPath, code);
+            AssetDatabase.Refresh();
         }
+
 
         [Test]
         public void CreateTable()
@@ -38,11 +54,17 @@ namespace Nico.Tests
             string tableCode = DefineCreator.CreateDataTable(
                 config.tableDataConfig.DataTableTemplate,
                 tableName,
-                new string[] { "id", "name", "pos" },
-                new string[] { "int", "string", "Vector2Int" }
+                new string[] { "name", "pos" },
+                new string[] { "string", "Vector2Int" }
             );
             var scriptPath = $"{config.DataTableScriptsPath}/{tableName}.cs";
             Nico.Editor.FileUtil.Write(scriptPath, tableCode);
+            AssetDatabase.Refresh();
+        }
+
+        [Test]
+        public void AssemblyDefineCreateTest()
+        {
             var definePath = $"{config.DataTableScriptsPath}/DataTable.asmdef";
             Nico.Editor.FileUtil.ReplaceContent(config.tableDataConfig.TDataTableAssemblyDefineTemplate, definePath);
             AssetDatabase.Refresh();

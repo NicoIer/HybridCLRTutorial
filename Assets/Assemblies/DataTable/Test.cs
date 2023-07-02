@@ -35,18 +35,18 @@ namespace Nico
     {
         public int id { get; set; }
 
-			public string name;
+		public string name;
 
-			public Vector2Int pos;
+		public Vector2Int pos;
 
 
 #if UNITY_EDITOR
         public bool Parse(int id, string[] values)
         {
             this.id = id;
-		if(!Nico.Editor.ParserManager.Parse<string,string>(values[1], out name)) return false;
+			if(!Nico.Editor.ParserManager.Parse<string,string>(values[0], out name)) return false;
 
-		if(!Nico.Editor.ParserManager.Parse<string,Vector2Int>(values[2], out pos)) return false;
+			if(!Nico.Editor.ParserManager.Parse<string,Vector2Int>(values[1], out pos)) return false;
 
 
             return true;

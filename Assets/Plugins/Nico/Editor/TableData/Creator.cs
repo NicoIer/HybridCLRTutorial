@@ -33,7 +33,7 @@ namespace Nico.Editor
             //生成成员变量定义
             foreach (string enumValue in enumValues)
             {
-                sb.AppendLine($"\t{enumValue},");
+                sb.AppendLine($"\t\t{enumValue},");
             }
 
             //替换成员变量
@@ -97,7 +97,7 @@ namespace Nico.Editor
         internal static string CreateParsers(string[] fieldNames, string[] fieldTypes)
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 1; i < fieldNames.Length; i++)
+            for (int i = 0; i < fieldNames.Length; i++)
             {
                 var fieldName = fieldNames[i];
                 var fieldType = fieldTypes[i];
@@ -130,13 +130,13 @@ namespace Nico.Editor
 
         internal static string CreateField(string fieldName, string fieldType)
         {
-            return $"\t\t\tpublic {fieldType} {fieldName};";
+            return $"\t\tpublic {fieldType} {fieldName};";
         }
 
         internal static string CreateFields(string[] fieldNames, string[] fieldTypes)
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 1; i < fieldNames.Length; i++)
+            for (int i = 0; i < fieldNames.Length; i++)
             {
                 var fieldName = fieldNames[i];
                 var fieldType = fieldTypes[i];

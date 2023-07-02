@@ -1,3 +1,4 @@
+using UnityEngine;
 namespace Nico
 {
     public struct ClassTemplateName
