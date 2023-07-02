@@ -3,15 +3,14 @@ using UnityEngine;
 
 namespace Nico
 {
-    public static partial class GlobalManager
+    public class GlobalManager : MonoBehaviour
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Init()
         {
             TableDataManager.Init();
-            
-            
-            
+
+
             Application.quitting -= OnApplicationQuitting;
             Application.quitting += OnApplicationQuitting;
         }
@@ -21,9 +20,4 @@ namespace Nico
             TableDataManager.OnApplicationQuitting();
         }
     }
-#if UNITY_EDITOR
-    public static partial class GlobalManager
-    {
-    }
-#endif
 }
