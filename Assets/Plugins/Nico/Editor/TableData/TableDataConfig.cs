@@ -9,10 +9,13 @@ namespace Nico.Editor
         [SerializeField] private TextAsset tEnumTemplate;
         [SerializeField] private TextAsset tClassTemplate;
         [SerializeField] private TextAsset tStructTemplate;
+        [SerializeField] private TextAsset tDataTableAssemblyDefineTemplate;
 
         public string DataTableTemplate => tDataTableTemplate.text;
         public string TEnumTemplate => tEnumTemplate.text;
         public string TClassTemplate => tClassTemplate.text;
         public string TStrauctTemplate => tStructTemplate.text;
+
+        public string TDataTableAssemblyDefineTemplate => tDataTableAssemblyDefineTemplate.text;
     }
 }

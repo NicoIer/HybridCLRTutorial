@@ -11,7 +11,8 @@ namespace Nico.Editor
     public class AddressAblesUpdateConfig : ScriptableObject
     {
         [SerializeReference] public readonly string AddressablesResourcesPath = "Assets/AddressablesResources";
-        [SerializeReference] public readonly string DataTableFolderName = "DataTable";
+        [SerializeReference] public readonly string DataTableAssetFolderPath = "Assets/AddressablesResources/DataTable";
+        [SerializeReference] public readonly string DataTableScriptsPath = "Assets/Assemblies/DataTable/";
         public AddressableAssetSettings settings => AddressableAssetSettingsDefaultObject.GetSettings(true);
         [SerializeField] public VisualTreeAsset uxml;
         [SerializeField] public StyleSheet uss;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Nico.Editor
 {
-    internal static class TableDataCreator
+    public static class TableDataCreator
     {
         internal static bool CreateData(out ITableData tableData, Type type, int id, string[] values)
         {
@@ -21,9 +21,9 @@ namespace Nico.Editor
     
 
     // CodeGenerator
-    internal static class DefineCreator
+    public static class DefineCreator
     {
-        internal static string CreateEnum(string template, string enumName, string[] enumValues)
+        public static string CreateEnum(string template, string enumName, string[] enumValues)
         {
             string code = template;
 
@@ -41,7 +41,7 @@ namespace Nico.Editor
             return code;
         }
 
-        internal static string CreateClass(string template, string className, string[] fieldNames, string[] fieldTypes)
+        public static string CreateClass(string template, string className, string[] fieldNames, string[] fieldTypes)
         {
             string code = template;
             //替换表名
@@ -54,7 +54,7 @@ namespace Nico.Editor
             return code;
         }
 
-        internal static string CreateStruct(string template, string structName, string[] fieldNames, string[] fieldTypes)
+        public static string CreateStruct(string template, string structName, string[] fieldNames, string[] fieldTypes)
         {
             string code = template;
 
@@ -125,12 +125,12 @@ namespace Nico.Editor
             // }
 
             return
-                $"\tif(!Nico.Editor.ParserManager.Parse<string,{fieldType}>(values[{idx}], out {fieldName})) return false;";
+                $"\t\t\tif(!Nico.Editor.ParserManager.Parse<string,{fieldType}>(values[{idx}], out {fieldName})) return false;";
         }
 
         internal static string CreateField(string fieldName, string fieldType)
         {
-            return $"\tpublic {fieldType} {fieldName};";
+            return $"\t\t\tpublic {fieldType} {fieldName};";
         }
 
         internal static string CreateFields(string[] fieldNames, string[] fieldTypes)

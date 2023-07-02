@@ -263,7 +263,7 @@ namespace Nico.Edotor
                 string dllName = entry.address.Split('/').Last();
 
                 string originPath = $"{originFolder}{dllName}";
-                FileUtil.ReplaceFile(originPath, address);
+                UnityEditor.FileUtil.ReplaceFile(originPath, address);
             }
 
             AssetDatabase.Refresh();

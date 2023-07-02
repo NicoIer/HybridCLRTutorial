@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Nico
 {
-    public class DataTableNameTemplate : ScriptableObject, IDataTable
+    public class TestDataTable : ScriptableObject, IDataTable
     {
-        [SerializeField]private SerializableDictionary<int, TableDataNameTemplate> _dataDict = new SerializableDictionary<int, TableDataNameTemplate>();
+        [SerializeField]private SerializableDictionary<int, TestData> _dataDict = new SerializableDictionary<int, TestData>();
 
         public ITableData Get(int id)
         {
@@ -19,7 +19,7 @@ namespace Nico
             {
                 Debug.LogWarning($"{GetType().Name} has already contains key: " + id);
             }
-            if (tableData is TableDataNameTemplate data)
+            if (tableData is TestData data)
             {
                 _dataDict[id] = data;
                 return;
@@ -31,16 +31,24 @@ namespace Nico
     }
 
 
-    public struct TableDataNameTemplate : ITableData
+    public struct TestData : ITableData
     {
         public int id { get; set; }
 
-//fieldsTemplate
+			public string name;
+
+			public Vector2Int pos;
+
+
 #if UNITY_EDITOR
         public bool Parse(int id, string[] values)
         {
             this.id = id;
-//parseFieldsTemplate
+		if(!Nico.Editor.ParserManager.Parse<string,string>(values[1], out name)) return false;
+
+		if(!Nico.Editor.ParserManager.Parse<string,Vector2Int>(values[2], out pos)) return false;
+
+
             return true;
         }
 #endif

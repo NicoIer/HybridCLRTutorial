@@ -16,3 +16,4 @@ MonoBehaviour:
   tEnumTemplate: {fileID: 4900000, guid: ee6c9208075f44499197c87632da807e, type: 3}
   tClassTemplate: {fileID: 4900000, guid: e7b16bcf30074080b42da1fbed636ff4, type: 3}
   tStructTemplate: {fileID: 4900000, guid: 2f03a08eafde4356aac819fc84acf9c7, type: 3}
+  tDataTableAssemblyDefineTemplate: {fileID: 4900000, guid: b75af14448214c559a61d94f9c7365fc, type: 3}

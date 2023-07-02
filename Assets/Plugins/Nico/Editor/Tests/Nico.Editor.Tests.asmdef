@@ -1,11 +1,12 @@
 {
-    "name": "Nico.Tests",
+    "name": "Nico.Editor.Tests",
     "rootNamespace": "Nico.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Nico.RunTime",
-        "Nico.Editor"
+        "Nico.Editor",
+        "DataTable"
     ],
     "includePlatforms": [
         "Editor"

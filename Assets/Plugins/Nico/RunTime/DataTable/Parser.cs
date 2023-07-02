@@ -6,6 +6,8 @@ using UnityEditor.Callbacks;
 
 namespace Nico.Editor
 {
+    
+#if UNITY_EDITOR
     public delegate bool ParseDelegate<in TData, TResult>(TData value, out TResult result);
 
     internal static class Parser<TData, TResult>
@@ -191,7 +193,17 @@ namespace Nico.Editor
 
         public static void RegisterParser<TData, TResult>(ParseDelegate<TData, TResult> @delegate)
         {
-            RegisterParser(typeof(TData), typeof(TResult), @delegate);
+            Parser<TData, TResult>.parser = @delegate;
+            _cacheDict ??= new Dictionary<Type, HashSet<Type>>();
+
+            var dataType = typeof(TData);
+            var resultType = typeof(TResult);
+            if (!_cacheDict.ContainsKey(dataType))
+            {
+                _cacheDict.Add(dataType, new HashSet<Type>());
+            }
+
+            _cacheDict[dataType].Add(resultType);
         }
 
         public static bool Contains(Type dataType, Type resultType)
@@ -561,3 +573,4 @@ namespace Nico.Editor
         }
     }
 }
+#endif
