@@ -23,6 +23,7 @@ namespace Nico.Tests
             // string projectPath = Application.dataPath; //从Assets 回退到工程目录
             // projectPath = projectPath.Substring(0, projectPath.Length - 6);
             // string excelPath = EditorUtility.OpenFilePanelWithFilters("select excel", projectPath, new string[] { "Excel Files", "csv,xlsx,xls" });
+            
             string excelPath = "Excel/Test.xlsx";
             var stringsMap = ExcelParser.ReadExcel(excelPath);
             Assert.AreEqual(true, stringsMap.Count == 1);

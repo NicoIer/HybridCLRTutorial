@@ -10,23 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: DialogSystem
+  m_Name: DataTable
   m_EditorClassIdentifier: 
-  m_GroupName: DialogSystem
+  m_GroupName: DataTable
   m_Data:
     m_SerializedData: []
-  m_GUID: 458e19f99c80e5a4ba606822233725f2
-  m_SerializeEntries:
-  - m_GUID: 1fb3d44c21013d94a822cc4eca40aa4d
-    m_Address: DialogSystem/DialogGraph-RunTime
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 9d52cee8ccccb7844a273c5d1aee436c
-    m_Address: DialogSystem/DialogGraph
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+  m_GUID: ab89f42e00b986046844e5cdaf1957f8
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 6dcb3ef574772b048bf1f1bb2d6ca36a, type: 2}
+    - {fileID: 11400000, guid: 138dc9e8128aba34bae9919404e07c50, type: 2}

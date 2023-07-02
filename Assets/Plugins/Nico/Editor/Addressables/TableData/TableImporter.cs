@@ -11,7 +11,6 @@ namespace Nico.Editor
 {
     public static class TableImporter
     {
-        private static readonly Assembly _assembly = Assembly.Load("DataTable");
         private static readonly Dictionary<string, string> defineDict = new Dictionary<string, string>();
         private static readonly Dictionary<string, string> tableCodeDict = new Dictionary<string, string>();
 
@@ -40,6 +39,7 @@ namespace Nico.Editor
                 {
                     Nico.FileUtil.Create(savePath);
                 }
+
                 AssetDatabase.CreateAsset(scriptableObject, savePath);
             }
 
@@ -118,8 +118,20 @@ namespace Nico.Editor
 
         public static bool CreateTable(out IDataTable table, string tableName, string[][] dataValues)
         {
-            Type tableType = _assembly.GetType($"Nico.{tableName}DataTable");
-            Type dataType = _assembly.GetType($"Nico.{tableName}Data");
+            Assembly assembly = null;
+            try
+            {
+                assembly = Assembly.Load("DataTable");
+            }
+            catch (FileNotFoundException e)
+            {
+                Debug.LogWarning($"DataTable.dll not found ,msg:{e}");
+                table = null;
+                return false;
+            }
+
+            Type tableType = assembly.GetType($"Nico.{tableName}DataTable");
+            Type dataType = assembly.GetType($"Nico.{tableName}Data");
 
             if (!TableDataCreator.CreateTable(out table, tableType))
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using Nico.DialogSystem;
 using Nico.Editor;
 using UnityEditor;
@@ -51,3 +52,4 @@ namespace Nico.DialogSystem.Editor
         }
     }
 }
+#endif

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
@@ -37,7 +39,8 @@ namespace Nico.Edotor
 
 
         private Button _importDataTableButton;
-        private ProgressBar _importDataTableProgressBar;
+
+        private Button _codeGenButton;
 
         [MenuItem("Tools/Nico/AddressableEditorWindow")]
         public static void ShowExample()
@@ -48,6 +51,7 @@ namespace Nico.Edotor
 
         public void CreateGUI()
         {
+            config = Resources.Load<AddressAblesUpdateConfig>("AddressablesUpdateConfig");
             VisualElement root = rootVisualElement;
             VisualElement labelFromUxml = uxml.Instantiate();
             labelFromUxml.styleSheets.Add(uss);
@@ -63,6 +67,7 @@ namespace Nico.Edotor
             QueryAddressableUpdate();
             QueryHotUpdate();
             QueryImportDataTable();
+            QueryCodeGenerate();
         }
 
 
@@ -123,7 +128,13 @@ namespace Nico.Edotor
             VisualElement dataTable = rootVisualElement.Q<VisualElement>("import_datatable");
             _importDataTableButton = dataTable.Q<Button>();
             _importDataTableButton.clickable.clicked += ImportDataTable;
-            _importDataTableProgressBar = dataTable.Q<ProgressBar>();
+        }
+
+        private void QueryCodeGenerate()
+        {
+            VisualElement codeGen = rootVisualElement.Q<VisualElement>("code_generate");
+            _codeGenButton = codeGen.Q<Button>();
+            _codeGenButton.clickable.clicked += CodeGenerate;
         }
 
         #endregion
@@ -271,24 +282,49 @@ namespace Nico.Edotor
             _hotUpdateButton.SetEnabled(true);
         }
 
+        private void CodeGenerate()
+        {
+            _codeGenButton.SetEnabled(false);
+            string projectPath = Application.dataPath; //从Assets 回退到工程目录
+            projectPath = projectPath.Substring(0, projectPath.Length - 6);
+            string excelPath = EditorUtility.OpenFilePanelWithFilters("select excel", projectPath,
+                new string[] { "Excel Files", "csv,xlsx,xls" });
+            if (string.IsNullOrEmpty(excelPath))
+            {
+                _codeGenButton.SetEnabled(true);
+                return;
+            }
+
+            TableImporter.ImportExcel(excelPath);
+            _codeGenButton.SetEnabled(true);
+        }
+
         private void ImportDataTable()
         {
-            string result = DefineCreator.CreateDataTable(
-                config.tableDataConfig.DataTableTemplate,
-                "Test",
-                new string[] { "id" ,"name","pos"},
-                new string[] { "int" ,"string","Vector2Int"}
-            );
-            Debug.Log(result);
-            //打开文件夹选择窗口
-            // string folderPath = EditorUtility.OpenFolderPanel("选择数据表所在的文件夹", "", "");
-            // if (string.IsNullOrEmpty(folderPath))
-            // {
-            //     return;
-            // }
-            //
-            // Debug.Log(folderPath);
-            //
+            _importDataTableButton.SetEnabled(false);
+            string projectPath = Application.dataPath; //从Assets 回退到工程目录
+            projectPath = projectPath.Substring(0, projectPath.Length - 6);
+            string excelPath = EditorUtility.OpenFilePanelWithFilters("select excel", projectPath,
+                new string[] { "Excel Files", "csv,xlsx,xls" });
+            if (string.IsNullOrEmpty(excelPath))
+            {
+                _importDataTableButton.SetEnabled(true);
+                return;
+            }
+
+            try
+            {
+                TableImporter.ImportData(excelPath);
+            }
+            catch (FileNotFoundException e)
+            {
+                Debug.LogError("找不到文件:" + e.FileName);
+            }
+            finally
+            {
+                AssetDatabase.Refresh();
+                _importDataTableButton.SetEnabled(true);
+            }
         }
 
         #endregion

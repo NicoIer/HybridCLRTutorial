@@ -29,7 +29,7 @@ namespace Nico.DialogSystem.Editor
                     level = 2,
                     userData = DialogTypeEnum.SingleChoice
                 },
-                new SearchTreeEntry(new GUIContent("Single Choice", indentIcon))
+                new SearchTreeEntry(new GUIContent("Mul Choice", indentIcon))
                 {
                     level = 2,
                     userData = DialogTypeEnum.MultipleChoice
