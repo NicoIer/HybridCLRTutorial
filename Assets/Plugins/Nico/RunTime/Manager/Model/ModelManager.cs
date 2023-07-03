@@ -9,9 +9,14 @@ namespace Nico
             throw new NotImplementedException();
         }
 
-        public static void Register<T>()
+        public static void Register<T>() where T : IModel, new()
         {
             throw new NotImplementedException();
         }
+    }
+
+    public interface IModel
+    {
+        
     }
 }

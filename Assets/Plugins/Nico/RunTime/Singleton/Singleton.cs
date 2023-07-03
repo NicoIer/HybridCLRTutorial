@@ -45,7 +45,7 @@ namespace Nico
         /// 单例初始化函数
         /// </summary>
         /// <exception cref="DesignException"></exception>
-        public virtual void Init()
+        protected virtual void Init()
         {
             if (_instance != null)
                 throw new DesignException($"{typeof(T)}already has an instance!!!");

@@ -9,6 +9,7 @@ namespace Nico
     {
         private static readonly Dictionary<Type, IDataTable> _dataTables = new Dictionary<Type, IDataTable>();
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Init()
         {
             _dataTables.Clear();
@@ -41,13 +42,8 @@ namespace Nico
                     continue;
                 }
 
-                _dataTables.Add(type, table);
+                _dataTables[type] = table;
             }
-        }
-
-        public static void OnApplicationQuitting()
-        {
-            _dataTables.Clear();
         }
 
         public static TData Get<TData>(int id) where TData : ITableData

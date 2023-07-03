@@ -11,6 +11,7 @@ namespace Nico
         private static readonly object _lock = typeof(T);
         private static T _instance;
 
+        public static T InstanceNullable => _instance;
         /// <summary>
         /// 正常访问时的途径
         /// </summary>
