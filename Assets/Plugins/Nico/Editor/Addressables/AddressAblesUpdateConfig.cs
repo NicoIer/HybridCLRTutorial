@@ -15,8 +15,8 @@ namespace Nico.Editor
     {
         private static readonly Dictionary<string, string> DefaultFolderToLabel = new Dictionary<string, string>()
         {
-            { GlobalConst.DATATABLE_FOLDER_NAME, GlobalConst.DATATABLE_LABEL },
-            { GlobalConst.POOL_OBJECT_PREFAB_FOLDER_NAME, GlobalConst.POOL_OBJECT_PREFAB_LABEL },
+            // { GlobalConst.DATATABLE_FOLDER_NAME, GlobalConst.DATATABLE_LABEL },
+            // { GlobalConst.POOL_OBJECT_PREFAB_FOLDER_NAME, GlobalConst.POOL_OBJECT_PREFAB_LABEL },
             { GlobalConst.HOTUPDATE_DLL_FOLDER_NAME, GlobalConst.HOTUPDATE_DLL_LABEL },
             { GlobalConst.AOT_DLL_FOLDER_NAME, GlobalConst.AOT_DLL_LABEL }
         };

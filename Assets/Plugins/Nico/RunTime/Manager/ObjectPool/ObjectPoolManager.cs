@@ -15,31 +15,43 @@ namespace Nico
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Return<T>(T obj) where T : IPoolObject, new() => ObjectPool<T>.Return(obj);
 
-
+        // ObjectPoolManager在Editor模式下可以使用预制体池 但是在进入运行时模式后 会自动清空Editor下注册的预制体池
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Init()
         {
-            Addressables.LoadAssetsAsync<GameObject>(GlobalConst.POOL_OBJECT_PREFAB_LABEL, OnPrefabLoaded)
-                .WaitForCompletion();
+            _pool.Clear();
+            Application.quitting -= OnApplicationQuit;
+            Application.quitting += OnApplicationQuit;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void OnPrefabLoaded(GameObject prefab)
+        private static void OnApplicationQuit()
+        {
+            _pool.Clear();
+        }
+
+
+        public static void Register(GameObject prefab, string prefabName = null)
         {
             if (prefab == null)
             {
-                Debug.LogWarning(" loaded prefab is null");
+                Debug.LogWarning(" prefab is null");
                 return;
             }
 
-            if (_pool.ContainsKey(prefab.name))
+            if (prefabName == null)
             {
-                Debug.LogWarning($" loaded prefab name:{prefab.name} is already in pool");
+                prefabName = prefab.name;
+            }
+
+            if (_pool.ContainsKey(prefabName))
+            {
+                Debug.LogWarning($" prefab name:{prefabName} is already in pool");
                 return;
             }
 
-            _pool.Add(prefab.name, new PrefabPool(prefab, prefab.name));
+            _pool.Add(prefabName, new PrefabPool(prefab, prefabName));
         }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static GameObject Get(string prefabName)

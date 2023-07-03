@@ -8,51 +8,41 @@ namespace Nico
 {
     public static class TableDataManager
     {
-        private static readonly Dictionary<Type, IDataTable> _dataTables = new Dictionary<Type, IDataTable>();
+        internal static readonly Dictionary<Type, IDataTable> dataTables = new Dictionary<Type, IDataTable>();
 
-        //TODO 后续 使用MonoCeil 编织一个静态类 在其中通知 TableDataManager 加载数据 从而取消反射
+        // 运行时 会自动清空Editor下注册的表格 因此 无需担心内存泄漏
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        public static void Init()
+        private static void Init()
         {
-            _dataTables.Clear();
-            var types = ReflectionUtils.GetTypesWithInterface<IDataTable>();
+            dataTables.Clear();
+            Application.quitting -= OnApplicationQuit;
+            Application.quitting += OnApplicationQuit;
+        }
 
-            foreach (var type in types)
+        private static void OnApplicationQuit()
+        {
+            dataTables.Clear();
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Register<TDataTable>(TDataTable dataTable) where TDataTable : IDataTable
+        {
+            Type type = typeof(TDataTable);
+            if (dataTables.ContainsKey(type))
             {
-                ScriptableObject dataTable = null;
-                try
-                {
-                    //从 Addressables 中加载
-                    dataTable = Addressables.LoadAssetAsync<ScriptableObject>("DataTable/" + type.Name)
-                        .WaitForCompletion();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"load {type.Name} failed skip it.  error:{e}");
-                    continue;
-                }
-
-                if (dataTable == null)
-                {
-                    Debug.LogError($"[TableDataManager] Load {type.Name} failed");
-                    continue;
-                }
-
-                if (dataTable is not IDataTable table)
-                {
-                    Debug.LogError($"[TableDataManager] {type.Name} is not IDataTable");
-                    continue;
-                }
-
-                _dataTables[type] = table;
+                Debug.LogWarning($"dataTable:{typeof(TDataTable).Name} already loaded");
+                return;
             }
+
+            dataTables[type] = dataTable;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TData Get<TData>(int id) where TData : ITableData
         {
             var type = typeof(TData);
-            if (!_dataTables.TryGetValue(type, out IDataTable dataTable))
+            if (!dataTables.TryGetValue(type, out IDataTable dataTable))
             {
                 throw new ArgumentException($"[TableDataManager] {type.Name} not found");
             }
@@ -64,7 +54,7 @@ namespace Nico
         public static TDataTable Get<TDataTable>() where TDataTable : IDataTable
         {
             var type = typeof(TDataTable);
-            if (!_dataTables.TryGetValue(type, out IDataTable dataTable))
+            if (!dataTables.TryGetValue(type, out IDataTable dataTable))
             {
                 throw new ArgumentException($"[TableDataManager] {type.Name} not found");
             }

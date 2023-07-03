@@ -6,11 +6,19 @@ namespace Nico
     {
         internal static EventCenter<T> center;
     }
-
+    
+    
     public static class EventManager
     {
+        //由于使用了泛型 因此 Editor注册的事件 进入 PlayerMode无法清空 可能会导致异常  所以 限制在PlayerMode下使用
         public static void Listen<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
         {
+            if (!Application.isPlaying)
+            {
+                Debug.LogWarning("EventCenter should not be used in edit mode");
+                return;
+            }
+
             if (EventCenters<TEvent>.center == null)
             {
                 EventCenters<TEvent>.center = new EventCenter<TEvent>();
@@ -29,6 +37,12 @@ namespace Nico
 
         public static void UnListen<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
         {
+            if (!Application.isPlaying)
+            {
+                Debug.LogWarning("EventCenter should not be used in edit mode");
+                return;
+            }
+
             if (EventCenters<TEvent>.center == null)
             {
                 Debug.LogWarning($"EventCenter<{typeof(TEvent)}> not exist");
@@ -40,11 +54,23 @@ namespace Nico
 
         public static void Trigger<TEvent>() where TEvent : struct, IEvent
         {
+            if (!Application.isPlaying)
+            {
+                Debug.LogWarning("EventCenter should not be used in edit mode");
+                return;
+            }
+
             Trigger<TEvent>(default(TEvent));
         }
 
         public static void Trigger<TEvent>(TEvent e) where TEvent : IEvent
         {
+            if (!Application.isPlaying)
+            {
+                Debug.LogWarning("EventCenter should not be used in edit mode");
+                return;
+            }
+
             if (EventCenters<TEvent>.center == null)
             {
                 Debug.LogWarning($"EventCenter<{typeof(TEvent)}> not exist");

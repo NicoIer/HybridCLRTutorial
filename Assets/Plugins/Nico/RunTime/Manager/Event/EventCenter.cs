@@ -1,12 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEngine;
 
 namespace Nico
 {
     internal class EventCenter<TEvent> where TEvent: IEvent
     {
         private readonly HashSet<IEventListener<TEvent>> _listeners;
+        // 之所以这里加锁 是因为 EventCenter 不一定只在主线程访问 它是 MonoBehavior无关的
         private readonly ReaderWriterLockSlim _lock;
         private bool _triggering;
 
@@ -23,10 +24,9 @@ namespace Nico
             {
                 if (_triggering)
                 {
-                    Debug.LogWarning("EventCenter is triggering, please don't add listener in event trigger");
-                    return;
+                    throw new ArgumentException(
+                        "EventCenter is triggering, please don't add listener in event trigger");
                 }
-                Debug.Log($"AddListener<{typeof(TEvent)}>");
                 _listeners.Add(listener);
             }
             finally
@@ -42,7 +42,9 @@ namespace Nico
             {
                 if (_triggering)
                 {
-                    Debug.LogWarning("EventCenter is triggering, please don't remove listener in event trigger");
+                    throw new ArgumentException(
+                        "EventCenter is triggering, please don't add listener in event trigger");
+                    return;
                 }
                 _listeners.Remove(listener);
             }
