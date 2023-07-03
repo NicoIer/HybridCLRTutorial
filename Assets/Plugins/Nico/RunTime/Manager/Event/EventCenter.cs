@@ -4,29 +4,29 @@ using UnityEngine;
 
 namespace Nico
 {
-    internal class EventCenter
+    internal class EventCenter<TEvent> where TEvent: IEvent
     {
-        private readonly HashSet<IEventListener> _listeners;
+        private readonly HashSet<IEventListener<TEvent>> _listeners;
         private readonly ReaderWriterLockSlim _lock;
-        private static bool _triggering;
+        private bool _triggering;
 
         public EventCenter()
         {
-            _listeners = new HashSet<IEventListener>();
+            _listeners = new HashSet<IEventListener<TEvent>>();
             _lock = new ReaderWriterLockSlim();
         }
 
-        public void AddListener(IEventListener listener)
+        public void AddListener(IEventListener<TEvent> listener)
         {
-            if (_triggering)
-            {
-                Debug.LogWarning("EventCenter is triggering, please don't add listener in event trigger");
-                return;
-            }
-
             _lock.EnterWriteLock();
             try
             {
+                if (_triggering)
+                {
+                    Debug.LogWarning("EventCenter is triggering, please don't add listener in event trigger");
+                    return;
+                }
+                Debug.Log($"AddListener<{typeof(TEvent)}>");
                 _listeners.Add(listener);
             }
             finally
@@ -35,16 +35,15 @@ namespace Nico
             }
         }
 
-        public void RemoveListener(IEventListener listener)
+        public void RemoveListener(IEventListener<TEvent> listener)
         {
-            if (_triggering)
-            {
-                Debug.LogWarning("EventCenter is triggering, please don't remove listener in event trigger");
-            }
-
             _lock.EnterWriteLock();
             try
             {
+                if (_triggering)
+                {
+                    Debug.LogWarning("EventCenter is triggering, please don't remove listener in event trigger");
+                }
                 _listeners.Remove(listener);
             }
             finally
@@ -53,7 +52,7 @@ namespace Nico
             }
         }
 
-        public void Trigger(IEvent e)
+        public void Trigger(TEvent e)
         {
             _lock.EnterReadLock();
             try

@@ -1,33 +1,41 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Nico
 {
+    internal static class EventCenters<T> where T : IEvent
+    {
+        internal static EventCenter<T> center;
+    }
+
     public static class EventManager
     {
-        private static Dictionary<Type, EventCenter> _eventCenters;
-
-        public static void Listen<TEvent, TEventListener>(TEventListener listener) where TEvent : IEvent
-            where TEventListener : IEventListener
+        public static void Listen<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
         {
-            if (!_eventCenters.ContainsKey(typeof(TEvent)))
+            if (EventCenters<TEvent>.center == null)
             {
-                _eventCenters.Add(typeof(TEvent), new EventCenter());
+                EventCenters<TEvent>.center = new EventCenter<TEvent>();
+                Application.quitting -= ClearEventCenter<TEvent>;
+                Application.quitting += ClearEventCenter<TEvent>;
             }
 
-            _eventCenters[typeof(TEvent)].AddListener(listener);
+            EventCenters<TEvent>.center.AddListener(listener);
         }
 
-        public static void UnListen<TEvent>(IEventListener listener) where TEvent : IEvent
+        private static void ClearEventCenter<T>() where T : IEvent
         {
-            if (!_eventCenters.ContainsKey(typeof(TEvent)))
+            // Debug.Log($"ClearEventCenter<{typeof(T)}>");
+            EventCenters<T>.center = null;
+        }
+
+        public static void UnListen<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
+        {
+            if (EventCenters<TEvent>.center == null)
             {
                 Debug.LogWarning($"EventCenter<{typeof(TEvent)}> not exist");
                 return;
             }
 
-            _eventCenters[typeof(TEvent)].RemoveListener(listener);
+            EventCenters<TEvent>.center.RemoveListener(listener);
         }
 
         public static void Trigger<TEvent>() where TEvent : struct, IEvent
@@ -37,17 +45,13 @@ namespace Nico
 
         public static void Trigger<TEvent>(TEvent e) where TEvent : IEvent
         {
-            if (!_eventCenters.ContainsKey(typeof(TEvent)))
+            if (EventCenters<TEvent>.center == null)
             {
                 Debug.LogWarning($"EventCenter<{typeof(TEvent)}> not exist");
                 return;
             }
 
-            _eventCenters[typeof(TEvent)].Trigger(e);
+            EventCenters<TEvent>.center.Trigger(e);
         }
     }
-
-
-
-
 }

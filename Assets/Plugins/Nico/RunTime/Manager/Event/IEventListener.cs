@@ -1,7 +1,7 @@
 namespace Nico
 {
-    public interface IEventListener
+    public interface IEventListener<in TEvent> where TEvent : IEvent
     {
-        public void OnReceiveEvent<T>(T e) where T : IEvent;
+        void OnReceiveEvent(TEvent e);
     }
 }
