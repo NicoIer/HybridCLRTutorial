@@ -297,6 +297,7 @@ namespace Nico.Edotor
 
             TableImporter.ImportExcel(excelPath);
             _codeGenButton.SetEnabled(true);
+            AssetDatabase.Refresh();
         }
 
         private void ImportDataTable()

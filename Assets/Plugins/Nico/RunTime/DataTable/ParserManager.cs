@@ -179,7 +179,7 @@ namespace Nico.Editor
 
         public static void RegisterParser<TData, TResult>(ParseDelegate<TData, TResult> @delegate)
         {
-            Parser<TData, TResult>.parser = @delegate;
+            Parser<TData, TResult>.parser = @delegate;  
             _cacheDict ??= new Dictionary<Type, HashSet<Type>>();
 
             var dataType = typeof(TData);
