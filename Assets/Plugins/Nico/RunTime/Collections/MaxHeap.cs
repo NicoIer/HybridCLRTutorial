@@ -78,31 +78,68 @@ namespace Nico
                 parentIndex = (index - 1) / 2;
             }
         }
+        //
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // private void HeapifyDown(int index)
+        // {
+        //     int leftChildIndex = index * 2 + 1;
+        //     int rightChildIndex = index * 2 + 2;
+        //     int largestIndex = index;
+        //
+        //     if (leftChildIndex < _count && _comparer(_elements[leftChildIndex], _elements[largestIndex]) > 0)
+        //     {
+        //         largestIndex = leftChildIndex;
+        //     }
+        //
+        //     if (rightChildIndex < _count && _comparer(_elements[rightChildIndex], _elements[largestIndex]) > 0)
+        //     {
+        //         largestIndex = rightChildIndex;
+        //     }
+        //
+        //     if (largestIndex != index)
+        //     {
+        //         (_elements[index], _elements[largestIndex]) = (_elements[largestIndex], _elements[index]);
+        //         HeapifyDown(largestIndex);
+        //     }
+        // }
 
+        // 循环版本
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void HeapifyDown(int index)
         {
-            int leftChildIndex = index * 2 + 1;
-            int rightChildIndex = index * 2 + 2;
-            int largestIndex = index;
-
-            if (leftChildIndex < _count && _comparer(_elements[leftChildIndex], _elements[largestIndex]) > 0)
+            int maxIteration = (int)Math.Log(_count, 2) + 1;// 放置死循环 虽然不可能
+            while (maxIteration-- > 0)
             {
-                largestIndex = leftChildIndex;
-            }
+                int leftChildIndex = index * 2 + 1;
+                int rightChildIndex = index * 2 + 2;
+                int largestIndex = index;
 
-            if (rightChildIndex < _count && _comparer(_elements[rightChildIndex], _elements[largestIndex]) > 0)
-            {
-                largestIndex = rightChildIndex;
-            }
+                if (leftChildIndex < _count && _comparer(_elements[leftChildIndex], _elements[largestIndex]) > 0)
+                {
+                    largestIndex = leftChildIndex;
+                }
 
-            if (largestIndex != index)
-            {
+                if (rightChildIndex < _count && _comparer(_elements[rightChildIndex], _elements[largestIndex]) > 0)
+                {
+                    largestIndex = rightChildIndex;
+                }
+
+                if (largestIndex == index)//OK
+                {
+                    break;
+                }
+
                 (_elements[index], _elements[largestIndex]) = (_elements[largestIndex], _elements[index]);
-                HeapifyDown(largestIndex);
+                index = largestIndex;
+            }
+
+            if (maxIteration <= 0)
+            {
+                throw new Exception("HeapifyDown DeadLoop");
             }
         }
-        
+
+
         private void Grow()
         {
             TElement[] newElements = new TElement[_elements.Length * DefaultCapacityIncrease];
