@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Nico
@@ -21,6 +22,7 @@ namespace Nico
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal GameObject Get()
         {
             if (_gameObjects.Count == 0)
@@ -37,6 +39,7 @@ namespace Nico
             return obj2;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Return(GameObject gameObject)
         {
             gameObject.name = _prefabName;
