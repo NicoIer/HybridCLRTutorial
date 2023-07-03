@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Object = UnityEngine.Object;
 
 namespace Nico
 {
@@ -14,24 +11,25 @@ namespace Nico
         public static void Return<T>(T obj) where T : IPoolObject, new() => ObjectPool<T>.Return(obj);
 
 
-        private static readonly AssetLabelReference _poolObjectPrefabLabel = new AssetLabelReference()
-            { labelString = GlobalConst.POOL_OBJECT_PREFAB_LABEL };
-
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Init()
         {
-            //加载所有的对象池游戏预制体
-            Addressables.LoadAssetsAsync<GameObject>(_poolObjectPrefabLabel, OnPrefabLoaded);
+            Addressables.LoadAssetsAsync<GameObject>(GlobalConst.POOL_OBJECT_PREFAB_LABEL, OnPrefabLoaded).WaitForCompletion();
         }
 
         private static void OnPrefabLoaded(GameObject prefab)
         {
-            if (prefab == null) return;
-            if (_pool.ContainsKey(prefab.name))
+            if (prefab == null)
             {
+                Debug.LogWarning(" loaded prefab is null");
                 return;
             }
-
+            if (_pool.ContainsKey(prefab.name))
+            {
+                Debug.LogWarning($" loaded prefab name:{prefab.name} is already in pool");
+                return;
+            }
+            
             _pool.Add(prefab.name, new PrefabPool(prefab, prefab.name));
         }
 
@@ -43,7 +41,7 @@ namespace Nico
             }
 
             Debug.LogError(
-                $"ObjectPoolManager.Get({prefabName}) failed. it has not been register into addressables yet. please using label{_poolObjectPrefabLabel} to tag it.");
+                $"ObjectPoolManager.Get({prefabName}) failed. it has not been register into addressables yet. please using label{GlobalConst.POOL_OBJECT_PREFAB_LABEL} to tag it.");
             return null;
         }
 
@@ -55,8 +53,9 @@ namespace Nico
             else
             {
                 Debug.LogWarning(
-                    $"ObjectPoolManager.Return({gameObject.name}). it has not been register into addressables yet. please using label{_poolObjectPrefabLabel} to tag it. now will create a temp pool to store it.");
+                    $"ObjectPoolManager.Return({gameObject.name}). it has not been register into addressables yet. please using label{GlobalConst.POOL_OBJECT_PREFAB_LABEL} to tag it. now will create a temp pool to store it.");
                 _pool.Add(gameObject.name, new PrefabPool(gameObject, gameObject.name));
+                Return(gameObject);
             }
         }
     }

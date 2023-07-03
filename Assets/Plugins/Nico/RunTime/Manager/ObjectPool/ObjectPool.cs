@@ -10,15 +10,22 @@ namespace Nico
         {
             if (_objects.Count == 0)
             {
-                return new T();
+                var t = new T();
+                t.OnSpawn();
+                t.state = PoolObjectState.Spawned;
+                return t;
             }
 
-            return _objects.Dequeue();
+            var obj= _objects.Dequeue();
+            obj.OnSpawn();
+            obj.state = PoolObjectState.Spawned;
+            return obj;
         }
 
         internal static void Return(T obj)
         {
             obj.OnRecycle();
+            obj.state = PoolObjectState.Recycled;
             _objects.Enqueue(obj);
         }
     }
