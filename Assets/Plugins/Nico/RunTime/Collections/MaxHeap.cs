@@ -107,8 +107,9 @@ namespace Nico
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void HeapifyDown(int index)
         {
-            int maxIteration = (int)Math.Log(_count, 2) + 1;// 放置死循环 虽然不可能
-            while (maxIteration-- > 0)
+            // int maxIteration = (int)Math.Log(_count, 2) + 1;// 放置死循环 虽然不可能
+            // while (maxIteration-- > 0)
+            while (true)
             {
                 int leftChildIndex = index * 2 + 1;
                 int rightChildIndex = index * 2 + 2;
@@ -133,10 +134,10 @@ namespace Nico
                 index = largestIndex;
             }
 
-            if (maxIteration <= 0)
-            {
-                throw new Exception("HeapifyDown DeadLoop");
-            }
+            // if (maxIteration <= 0)
+            // {
+                // throw new Exception("HeapifyDown DeadLoop");
+            // }
         }
 
 

@@ -61,14 +61,10 @@ namespace Nico
             {
                 var type = kvp.Key;
                 var link = kvp.Value;
-                if (type == typeof(T) || typeof(T).IsAssignableFrom(type))
-                {
-                    if (link.Count > 0)
-                    {
-                        obj = (T)link.Dequeue();
-                        return true;
-                    }
-                }
+                if (type != typeof(T) && !typeof(T).IsAssignableFrom(type)) continue;
+                if (link.Count <= 0) continue;
+                obj = (T)link.Dequeue();
+                return true;
             }
 
             obj = default;

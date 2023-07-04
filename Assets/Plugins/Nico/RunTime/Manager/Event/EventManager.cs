@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Nico
@@ -29,12 +30,14 @@ namespace Nico
             EventCenters<TEvent>.center.AddListener(listener);
         }
 
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ClearEventCenter<T>() where T : IEvent
         {
             // Debug.Log($"ClearEventCenter<{typeof(T)}>");
             EventCenters<T>.center = null;
         }
 
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void UnListen<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
         {
             if (!Application.isPlaying)
@@ -52,6 +55,7 @@ namespace Nico
             EventCenters<TEvent>.center.RemoveListener(listener);
         }
 
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Trigger<TEvent>() where TEvent : struct, IEvent
         {
             if (!Application.isPlaying)
@@ -63,6 +67,7 @@ namespace Nico
             Trigger<TEvent>(default(TEvent));
         }
 
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Trigger<TEvent>(TEvent e) where TEvent : IEvent
         {
             if (!Application.isPlaying)

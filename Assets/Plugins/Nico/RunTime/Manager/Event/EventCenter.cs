@@ -44,7 +44,7 @@ namespace Nico
                 {
                     throw new ArgumentException(
                         "EventCenter is triggering, please don't add listener in event trigger");
-                    return;
+                    // return;
                 }
                 _listeners.Remove(listener);
             }

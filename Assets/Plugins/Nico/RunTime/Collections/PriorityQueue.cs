@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Nico
 {
@@ -17,7 +18,31 @@ namespace Nico
         {
             return _maxHeap.Peek();
         }
+        
+        public bool TryDeQueue(out TElement element)
+        {
+            if (Count == 0)
+            {
+                element = default;
+                return false;
+            }
 
+            element = DeQueue();
+            return true;
+        }
+        
+        public bool TryPeek(out TElement element)
+        {
+            if (Count == 0)
+            {
+                element = default;
+                return false;
+            }
+
+            element = Peek();
+            return true;
+        }
+        
         public void EnQueue(TElement element)
         {
             _maxHeap.Insert(element);
