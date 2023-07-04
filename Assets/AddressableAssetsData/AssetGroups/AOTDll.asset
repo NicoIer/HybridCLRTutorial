@@ -15,41 +15,40 @@ MonoBehaviour:
   m_GroupName: AOTDll
   m_Data:
     m_SerializedData: []
-  m_GUID: 0910041484847a240979896e3e200774
+  m_GUID: cb256d778a5c99043b14cd227fced54d
   m_SerializeEntries:
-  - m_GUID: 98c1f36a566d49c46858b1b74a7cea5e
-    m_Address: System.Core
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - aot
-  - m_GUID: c2d05c2a7ac15184ea36c61639d7176d
-    m_Address: UniTask.Addressables.dll
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - aot
   - m_GUID: dde1d0a7a2db3424983c48e28395a28e
-    m_Address: mscorlib.dll
+    m_Address: AOTDll/mscorlib.dll
     m_ReadOnly: 0
     m_SerializedLabels:
-    - aot
+    - aot_dll
   - m_GUID: ffe7966c9f1008b4e9d35f10c9e7d707
-    m_Address: System
+    m_Address: AOTDll/System
     m_ReadOnly: 0
     m_SerializedLabels:
-    - aot
+    - aot_dll
+  - m_GUID: 98c1f36a566d49c46858b1b74a7cea5e
+    m_Address: AOTDll/System.Core
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot_dll
+  - m_GUID: c2d05c2a7ac15184ea36c61639d7176d
+    m_Address: AOTDll/UniTask.Addressables.dll
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - aot_dll
   - m_GUID: 7e342ab229df24148b1a2d244a1f8ccc
-    m_Address: UniTask.dll
+    m_Address: AOTDll/UniTask.dll
     m_ReadOnly: 0
     m_SerializedLabels:
-    - aot
+    - aot_dll
   - m_GUID: 386c0b5a827363e40bfe73886e8661ce
-    m_Address: Unity.Addressables.dll
+    m_Address: AOTDll/Unity.Addressables.dll
     m_ReadOnly: 0
     m_SerializedLabels:
-    - aot
+    - aot_dll
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
   m_SchemaSet:
     m_Schemas:
     - {fileID: 11400000, guid: 902500754ad1f7240be023204c9a5f38, type: 2}
-    - {fileID: 11400000, guid: 1ea60f6cc0669ce40b528d2976e1a881, type: 2}

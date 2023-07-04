@@ -134,6 +134,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IngameDebugConsole
       objectReference: {fileID: 0}
+    - target: {fileID: 11490438, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 55
+      objectReference: {fileID: 0}
     - target: {fileID: 22426080, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -441,14 +445,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hotUpdateDllLabelRef:
-    m_LabelString: hotfix
+    m_LabelString: hot_update_dll
   aotMetadataDllLabelRef:
-    m_LabelString: aot
-  hotUpdateMainSceneRef:
-    m_AssetGUID: a52cff069b653cd459b33e804db23eae
+    m_LabelString: aot_dll
+  hotScenes:
+  - m_AssetGUID: a52cff069b653cd459b33e804db23eae
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  - m_AssetGUID: 87f1437974ab01043a6194c9934deccb
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  hotSceneNames:
+  - HotUpdateScene
+  - HotUpdateScene
+  - HotUpdateScene
+  - Game02
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

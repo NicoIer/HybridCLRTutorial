@@ -15,16 +15,9 @@ MonoBehaviour:
   m_GroupName: Scene
   m_Data:
     m_SerializedData: []
-  m_GUID: e570d0f1e88c0ec4aba6b9d24b661717
-  m_SerializeEntries:
-  - m_GUID: a52cff069b653cd459b33e804db23eae
-    m_Address: HotUpdateScene
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - hotScene
+  m_GUID: 61ab79485417a0d49ac071597a1180d9
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
   m_SchemaSet:
-    m_Schemas:
-    - {fileID: 11400000, guid: 081bc72193e500343b7345f45d25e5fd, type: 2}
-    - {fileID: 11400000, guid: 2dfc2bd26498ded4791cff04df117964, type: 2}
+    m_Schemas: []

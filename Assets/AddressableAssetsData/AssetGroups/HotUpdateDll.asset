@@ -15,16 +15,15 @@ MonoBehaviour:
   m_GroupName: HotUpdateDll
   m_Data:
     m_SerializedData: []
-  m_GUID: 780ac7ed40b36984f9332cc678180c3c
+  m_GUID: caf269bded756c84585013218de74a5d
   m_SerializeEntries:
   - m_GUID: 7e28cb1863433e34bbbffdba24327dba
-    m_Address: HotUpdate.dll
+    m_Address: HotUpdateDll/HotUpdate.dll
     m_ReadOnly: 0
     m_SerializedLabels:
-    - hotfix
+    - hot_update_dll
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
   m_SchemaSet:
     m_Schemas:
     - {fileID: 11400000, guid: 8c333365922ce4040813f428fd5ee151, type: 2}
-    - {fileID: 11400000, guid: 41ee423ceaff71a4e8a8d9157ea559b3, type: 2}
